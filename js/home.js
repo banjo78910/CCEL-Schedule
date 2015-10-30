@@ -38,6 +38,7 @@ function loginForm( loginType ) {
 					var username = $( "#username" ).val();
 					var password = $( "#password" ).val();
 					console.log( username + " " + password );
+					loginHandler( $( "#username" ).val() );
 				}
 			}
 		}
@@ -79,4 +80,20 @@ function registerForm( loginType ) {
 		}
 	} );
 
+}
+
+function loginHandler( username ) {
+	$( "#navbar-right" ).html(
+		'<div class="btn-group navbar-btn">' +
+		'<button type="button" class="btn btn-danger">' + username + +'</button>' +
+		'<button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
+		'<span class="caret"></span>' +
+		'<span class="sr-only">Toggle Dropdown</span>' +
+		'</button>' +
+		'<ul class="dropdown-menu">' +
+		'<li><a href="#">My Account</a></li>' +
+		'<li><a href="#">Message Center</a></li>' +
+		'</ul>' +
+		'</div>'
+	);
 }
