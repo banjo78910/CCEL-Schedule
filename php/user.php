@@ -54,7 +54,7 @@ class User {
 		$sessionSubject = "grade " . $row["gradeLevel"] . " " . $row["subject"];
 		$tutorUsername = $row["tutorUsername"];
 		$tutorName = $row["tutorName"];
-		echo("<a href='#' class=\"sessionInfo list-group-item\">\n<button class=\"btn btn-default btn-add-to-sessions pull-right\">\nAdd to My Sessions</button>\t<h4>{$sessionSite}: {$sessionSubject}</h4>\n\t<p>{$sessionTime}<p>\n\t<p>{$tutorName}</p>\n</a>\n");
+		echo("<a href='#' class=\"sessionInfo list-group-item\" \">\n<button id=\"{$sessionID}\" class=\"btn btn-default btn-add-to-sessions pull-right\">\nAdd to My Sessions</button>\t<h4>{$sessionSite}: {$sessionSubject}</h4>\n\t<p>{$sessionTime}<p>\n\t<p>{$tutorName}</p>\n</a>\n");
 	}
 	
 	private function attemptLogin() {
@@ -65,24 +65,24 @@ class User {
 			$userQuery = "select * from {$GLOBALS["database"]}.user where username = '{$_POST["username"]}';";
 		}
 		else {
-			//echo("login failed");
+			echo("login failed");
 			return false;
 		}
 		$this->userResult = $this->connection->query($userQuery);
 		$this->userResult = $this->userResult->fetch_assoc();
 		if ($this->userResult == null) {
-			//echo("login failed");
+			echo("login failed");
 			return false;
 		}
 		/* Check password, and react appropriately: */
 		elseif ((isset($_POST["password"]) && ($_POST["password"] == $this->userResult["password"])) || isset($_COOKIE["username"])) {
-			setcookie("username", $this->userResult["username"], time() + 3600);
+			setcookie("username", $this->userResult["username"], time() + 60);
 			$this->specializeLogin($this->userResult);
-			//echo("login successful");
+			echo("login successful");
 			return true;
 		}
 		else {
-			//echo("login failed");
+			echo("login failed");
 			return false;
 		}
 	}
@@ -90,6 +90,7 @@ class User {
 	private function specializeLogin($userResult) {
 		$role = $userResult["role"];
 		if ($role == "attender") {
+			//echo("\nset specialized login as attender\n");
 			$this->specializedObject = new attender($userResult);
 		}
 		elseif ($role == "tutor" || $role == "siteLeader") {
@@ -104,8 +105,8 @@ class User {
 	}
 }
 
-$_POST["username"] = "student1";
-$_POST["password"] = "omg";
+//$_POST["username"] = "student1";
+//$_POST["password"] = "omg";
 $user = new User();
 //$user->displayAllSessions();
 // $user->specializedObject->retrieveAttendingSessions();
@@ -121,6 +122,7 @@ if (isset($_GET['function'])) {
 		$user->specializedObject->retrieveAttendingSessions();
 	}
 	elseif ($function == 'indicateWillAttend') {
+		echo("\nattempting to indicate will attend\n");
 		$user->specializedObject->willAttend($_GET['sessionID']);
 	}
 }

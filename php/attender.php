@@ -11,6 +11,9 @@ class attender {
 	
 	public function __construct($userInfo) {
 		$this->connection = new mysqli($GLOBALS["server"], $GLOBALS["dbUsername"], $GLOBALS["dbPassword"]);
+		if ($this->connection->connect_errno) {
+    		echo "Failed to connect to MySQL: (" . $this->connection->connect_errno . ") " . $this->connection->connect_error;
+    	}
 		$this->sessions = null;
 		$this->username = $userInfo["username"];
 	}
@@ -25,7 +28,8 @@ class attender {
 	}
 	
 	public function willAttend($sessionID) {
-		$query = "insert into {$GLOBALS["database"]}.willAttend values ({$sessionID}, '{$this->username}')";
+		echo("\nliterally calling the function to indicate will attend on {$sessionID}\n");
+		$query = "insert into ccelSchema.willAttend values (7, 'student1');";
 	}
 }
 ?>
