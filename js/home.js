@@ -1,5 +1,16 @@
 $( document ).ready( function() {
 
+	$.ajax( {
+		url: '/php/user.php',
+		type: 'post',
+		success: function( data ) {
+			$( "#sessions" ).html( data );
+		},
+		error: function( xhr, desc, err ) {
+			console.log( xhr + " " + desc + " " + err );
+		}
+	} );
+
 	$( "#login-student" ).click( function() {
 		loginForm( "Student" );
 	} );
@@ -37,8 +48,7 @@ function loginForm( loginType ) {
 				callback: function() {
 					var username = $( "#username" ).val();
 					var password = $( "#password" ).val();
-					console.log( username + " " + password );
-					loginHandler( $( "#username" ).val() );
+					loginHandler( username, password );
 				}
 			}
 		}
@@ -82,18 +92,34 @@ function registerForm( loginType ) {
 
 }
 
-function loginHandler( username ) {
+function loginHandler( username, password ) {
 	$( "#navbar-right" ).html(
 		'<div class="btn-group navbar-btn">' +
-		'<button type="button" class="btn btn-danger">' + username + +'</button>' +
+		'<button type="button" class="btn btn-danger">' + username + '</button>' +
 		'<button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
 		'<span class="caret"></span>' +
 		'<span class="sr-only">Toggle Dropdown</span>' +
 		'</button>' +
 		'<ul class="dropdown-menu">' +
-		'<li><a href="#">My Account</a></li>' +
+		'<li><a href="#">My Sessions</a></li>' +
 		'<li><a href="#">Message Center</a></li>' +
+		'<li role"separator" class="divider"></li>' +
+		'<li><a href="#">My Account</a></li>' +
 		'</ul>' +
 		'</div>'
 	);
+	$.ajax( {
+		url: 'user.php',
+		type: 'post',
+		data: {
+			'username': username,
+			'password': password
+		},
+		success: function( data ) {
+			console.log( data );
+		},
+		error: function( xhr, desc, err ) {
+			console.log( xhr + " " + desc + " " + err );
+		}
+	} );
 }
