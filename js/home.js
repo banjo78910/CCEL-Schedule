@@ -65,6 +65,7 @@ function loginForm( loginType ) {
 					username = $( "#username" ).val();
 					var password = $( "#password" ).val();
 					loginHandler( username, password );
+					return ( username, password );
 				}
 			}
 		}
@@ -105,6 +106,7 @@ function registerForm( loginType ) {
 			},
 		}
 	} );
+	return loginType;
 
 }
 
@@ -138,9 +140,11 @@ function loginHandler( username, password ) {
 		},
 		success: function( data ) {
 			console.log( data );
+			return data;
 		},
 		error: function( xhr, desc, err ) {
 			console.log( xhr + " " + desc + " " + err );
+			return xhr;
 		}
 	} );
 }
@@ -182,4 +186,5 @@ function userSessionList( username ) {
 		}
 
 	} );
+	return username;
 }
