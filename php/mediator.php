@@ -128,7 +128,7 @@ class Mediator {
 // $_POST["username"] = "ben";
 // $_POST["password"] = "lol";
 // $_GET['sessionID'] = 4;
-$_GET['function'] = 'displayAll';
+// $_GET['function'] = 'displayAll';
 $med = new Mediator();
 
 if (isset($_GET['function'])) {
