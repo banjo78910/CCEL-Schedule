@@ -21,6 +21,7 @@ class Attender {
 	
 	public function willAttend($sessionID) {
 		$query = "insert into {$GLOBALS["database"]}.willAttend values ({$sessionID}, '{$this->username}')";
+		$this->connection->query($query);
 	}
 }
 ?>

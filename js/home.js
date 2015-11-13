@@ -2,21 +2,24 @@ var username;
 $( document ).ready( function() {
 
 	$.ajax( {
-		url: '/php/user.php',
-		type: 'post',
+		url: '/php/mediator.php',
+		type: 'get',
+		data: {
+			'function': 'displayAll'
+		},
 		success: function( data ) {
 			$( "#sessions" ).html( data );
 			$( "#sessions" ).on( "click", ".btn-add-to-sessions", function() {
 				var sessionid = $( event.target ).attr( 'id' );
 				console.log( sessionid );
 				$.ajax( {
-					url: '/php/user.php',
+					url: '/php/mediator.php',
 					data: {
 						'function': 'indicateWillAttend',
 						'sessionID': sessionid
 					},
 					success( data ) {
-						console.log( data );
+						console.log( "Will attend succeeded" );
 					}
 
 				} );
@@ -48,6 +51,18 @@ function loginForm( loginType ) {
 			'<label class="col-md-4" control-label" for="password">Password</label>' +
 			'<input id="password" name="password" type="password" class="form-control form input-md">' +
 			'</div> ' +
+			'<div class="accountType form-group" >' +
+			'<div class="radio radio-inline">' +
+			'<label><input type="radio" name="accType" value="Student"> Student </label>' +
+			'</div>' +
+			'<div class="radio radio-inline">' +
+			'<label><input type="radio" name="accType" value="Tutor"> Tutor </label>' +
+			'</div>' +
+			'<div class="radio radio-inline">' +
+			'<label><input type="radio" name="accType" value="Admin"> Admin </label>' +
+			'</div>' +
+			'</div>' +
+
 			'</form> ' +
 			'</div> ',
 		buttons: {
@@ -64,8 +79,10 @@ function loginForm( loginType ) {
 				callback: function() {
 					username = $( "#username" ).val();
 					var password = $( "#password" ).val();
-					loginHandler( username, password );
-					return ( username, password );
+					var accountType = $( "input[name=accType]:checked" ).val();
+					console.log( username + password + accountType );
+					loginHandler( username, password, accountType );
+					return ( username, password, accountType );
 				}
 			}
 		}
@@ -110,7 +127,23 @@ function registerForm( loginType ) {
 
 }
 
-function loginHandler( username, password ) {
+function loginHandler( username, password, accountType ) {
+	var session;
+	var dropdown;
+	switch ( accountType ) {
+		case "Student":
+			session = "Sessions I Attend";
+			dropdown = "<button id='attending' class='btn dropdown-toggle pull-right' type='button' data-toggle='dropdown'>Attending<span class='caret'></span></button>";
+			break;
+		case "Tutor":
+			session = "Sessions I Tutor";
+			dropdown = "<button id='attending' class='btn dropdown-toggle pull-right' type='button' data-toggle='dropdown'>Students Attending<span class='caret'></span></button>";
+			break;
+		case "Admin":
+			session = "Sessions I Manage";
+			break;
+	}
+
 	$( "#navbar-right" ).html(
 		'<div class="btn-group navbar-btn">' +
 		'<button type="button" class="btn btn-primary" id="my-sessions"> My Sessions </button>' +
@@ -122,24 +155,45 @@ function loginHandler( username, password ) {
 		'<span class="sr-only">Toggle Dropdown</span>' +
 		'</button>' +
 		'<ul class="dropdown-menu">' +
-		'<li><a href="#">Message Center</a></li>' +
+		'<li id="sessions"><a href="#">' + session + '</a></li>' +
+		'<li id="messages"><a href="#">Message Center</a></li>' +
 		'<li role"separator" class="divider"></li>' +
-		'<li><a href="#">My Account</a></li>' +
+		'<li id="account"><a href="#">My Account</a></li>' +
+		'<li id="logout"><a href="#">Log Out</a></li>' +
 		'</ul>' +
 		'</div>'
 	);
-	$( '.btn-group' ).on( 'click', '#my-sessions', function() {
-		userSessionList( username );
+	$( '.btn-group' ).on( 'click', '#sessions', function() {
+
+		userSessionList( username, accountType, dropdown );
 	} );
+
+	$( '.btn-group' ).on( 'click', '#logout', function() {
+
+		$.ajax( {
+			url: '/php/mediator.php',
+			type: 'get',
+			data: {
+				'function': 'logout'
+			},
+			success: function( data ) {
+				return data;
+			},
+			error: function( xhr, desc, err ) {
+				console.log( xhr + " " + desc + " " + err );
+				return xhr;
+			}
+		} );
+	} );
+
 	$.ajax( {
-		url: '/php/user.php',
+		url: '/php/mediator.php',
 		type: 'post',
 		data: {
 			'username': username,
 			'password': password
 		},
 		success: function( data ) {
-			console.log( data );
 			return data;
 		},
 		error: function( xhr, desc, err ) {
@@ -149,42 +203,38 @@ function loginHandler( username, password ) {
 	} );
 }
 
-function userSessionList( username ) {
-	console.log( "function called" );
-	bootbox.dialog( {
-		title: username + "'s Sessions",
-		message: '<div id="sessions" class="list-group">' +
-			'<a href="#" class="list-group-item">' +
-			'<h4 class="list-group-item-heading">List Item 1</h4>' +
-			'<span class="list-group-item-text">List Item text.</span>' +
-			'</a>' +
-			'<a href="#" class="list-group-item">' +
-			'<h4 class="list-group-item-heading">List Item 2</h4>' +
-			'<p class="list-group-item-text">List Item text.</p>' +
-			'</a>' +
-			'<a href="#" class="list-group-item">' +
-			'<h4 class="list-group-item-heading">List Item 3</h4>' +
-			'<p class="list-group-item-text">List Item text.</p>' +
-			'</a>' +
-			'<a href="#" class="list-group-item">' +
-			'<h4 class="list-group-item-heading">List Item 4</h4>' +
-			'<p class="list-group-item-text">List Item text.</p>' +
-			'</a>' +
-			'<a href="#" class="list-group-item">' +
-			'<h4 class="list-group-item-heading">List Item 5</h4>' +
-			'<p class="list-group-item-text">List Item text.</p>' +
-			'</a>' +
-			'</div>',
-		buttons: {
-			close: {
-				label: "Close",
-				className: "btn-primary",
-				callback: function() {
+function userSessionList( username, accountType, dropdown ) {
+	var sessionDataString;
+	$.ajax( {
+		url: '/php/mediator.php',
+		type: 'get',
+		data: {
+			'function': 'retrieveWillAttend'
+		},
+		success: function( data ) {
+			console.log( "data: " + data );
+			sessionDataString = data + "";
+			bootbox.dialog( {
+				title: username + "'s Sessions",
+				message: sessionDataString,
+				buttons: {
+					close: {
+						label: "Close",
+						className: "btn-primary",
+						callback: function() {
 
+						}
+					}
 				}
-			}
-		}
 
+			} );
+		},
+		error: function( xhr, desc, err ) {
+			console.log( xhr + " " + desc + " " + err );
+			return xhr;
+		}
 	} );
+	console.log( sessionDataString );
+
 	return username;
 }

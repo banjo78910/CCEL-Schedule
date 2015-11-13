@@ -12,8 +12,8 @@ include("supervisor.php");
 
 $server = "localhost";
 $dbUsername = "root";
-$dbPassword = "4828";
-$database = "ccelSchema";
+$dbPassword = "root";
+$database = "sessions";
 
 class Mediator {
 	/* Holds a mysqli object: */
@@ -52,6 +52,7 @@ class Mediator {
 		/* Setup for pagination: */
 		$i = 0;
 		$this->genPageSelector();
+		echo("returned");
 		echo("<div class=\"page\" id=page1>");
 		while (($row = $this->sessions->fetch_assoc()) != null) {
 			/* If a page worth of results has been displayed, start a new "page" div: */
@@ -71,7 +72,7 @@ class Mediator {
 		$sessionSubject = "grade " . $row["gradeLevel"] . " " . $row["subject"];
 		$tutorUsername = $row["tutorUsername"];
 		$tutorName = $row["tutorName"];
-		echo("<div class=\"list-group-item\" id=\"session{$sessionID}\"><h4>{$sessionSite}: {$sessionSubject}</h4><h5>{$sessionTime}</h5><h5>{$tutorName}</h5></div>");
+		echo("<div class=\"list-group-item\" id=\"session{$sessionID}\"><button id=\"{$sessionID}\" class='btn dropdown-toggle btn-add-to-sessions pull-right' data-toggle='dropdown'><span class='caret'></span>I Will Attend </button> <h4>{$sessionSite}: {$sessionSubject}</h4><h5>{$sessionTime}</h5><h5>{$tutorName}</h5></div>");
 	}
 	
 	private function specializeLogin() {
@@ -128,7 +129,7 @@ class Mediator {
 // $_POST["username"] = "ben";
 // $_POST["password"] = "lol";
 // $_GET['sessionID'] = 4;
-$_GET['function'] = 'displayAll';
+// $_GET['function'] = 'displayAll';
 $med = new Mediator();
 
 if (isset($_GET['function'])) {
