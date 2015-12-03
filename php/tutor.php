@@ -1,44 +1,44 @@
 <?php
-
-/* - Make echoed usernames a clickable link that calls a js script, bringing up a pop-up with the user's info
- */
-
 class Tutor {
 	private $connection;
 	private $username;
-	private $sessions;
 	
 	public function __construct($username, $connection) {
 		$this->connection = $connection;
 		$this->username = $username;
-		$this->sessions = null;
 	}
 	
-	public function createSession($site, $date, $time, $subject, $gradeLevel, $tutorUsername, $tutorName) {
-		$maxIdQuery = "select max(sessionID) as sessionID from {$GLOBALS["database"]}.session";
-		$this->sessions = $this->connection->query($maxIdQuery);
-		$this->sessions = $this->sessions->fetch_assoc();
-		$id = $this->sessions['sessionID'] + 1;
-		$newSessionQuery = "insert into {$GLOBALS["database"]}.session values($id, '$site', '$date', '$time', '$subject', '$gradeLevel', '$tutorUsername', '$tutorName')";
-		$this->connection->query($newSessionQuery);
+	/**
+	 * Sign up to tutor at a given session.
+	 */
+	public function signUpToTutor($sessionID) {
+		$query = "insert into {$GLOBALS["database"]}.willTutor values ({$sessionID}, '{$this->username}')";
+		$this->connection->query($query);
 	}
 	
-	public function cancelSession($sessionID) {
-		$cancelQuery = "delete from {$GLOBALS["database"]}.session where sessionID = $sessionID";
-		$this->connection->query($cancelQuery);
+	/**
+	 * Indicate that this tutor will no longer tutor at a given upcoming session.
+	 */
+	public function cancelTutor($sessionID) {
+		$query = "delete from {$GLOBALS["database"]}.willTutor where sessionID = {$sessionID} and tutorID = '{$this->username}'";
+		echo($query);
+		$this->connection->query($query);
 	}
 	
-	public function getAttendingUsers($sessionID) {
-		$query = "select userID from {$GLOBALS["database"]}.willAttend where sessionID = $sessionID";
-		$this->sessions = $this->connection->query($query);
-		if ($this->sessions->num_rows == 0) {
-			echo("No attenders have signed up yet.");
+	/**
+	 * Retrieve and display info about all sessions at which this tutor is scheduled to tutor.
+	 */
+	public function displaySessions() {
+		$query = "select sessionID from {$GLOBALS["database"]}.willTutor where tutorID = '{$this->username}'";
+		$sessions = $this->connection->query($query);
+		if ($sessions->num_rows == 0) {
+			echo("Not tutoring at any sessions yet");
 		}
 		else {
-			$row = $this->sessions->fetch_assoc();
-			echo("{$row['userID']}");
-			while (($row = $this->sessions->fetch_assoc()) != null) {
-				echo(", {$row['userID']}");
+			while ($row = $sessions->fetch_assoc()) {
+				$session = new Session($row['sessionID']);
+				$session->display();
+				$session->getSessionAttenders();
 			}
 		}
 	}
