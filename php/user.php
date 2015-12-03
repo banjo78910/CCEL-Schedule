@@ -55,8 +55,8 @@ class User {
 		}
 		/* Check password: */
 		elseif ((isset($_POST["password"]) && ($_POST["password"] == $this->userResult["password"])) || isset($_COOKIE["username"])) {
-			setcookie("username", $this->userResult["username"], time() + 3600);
-			setcookie("role", $this->userResult["role"], time() + 3600);
+			setcookie("username", $this->userResult["username"], time() + 3600, '/');
+			setcookie("role", $this->userResult["role"], time() + 3600, '/');
 			return true;
 		}
 		else {
