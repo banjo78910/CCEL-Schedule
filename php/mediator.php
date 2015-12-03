@@ -165,9 +165,6 @@ if (isset($_GET['function'])) {
 	elseif ($function == 'logout') {
 		$med->getUser()->logout();
 	}
-	elseif ($function == 'login') {
-		echo($med->getUser()->getRole());
-	}
 	/* Attender functions: */
 	elseif ($function == 'displayAttendingSessions') {
 		$med->displayAttendingSessions();
