@@ -1,10 +1,19 @@
 var username;
 var role;
+var roleData = {
+	'addSession': '',
+	'deleteSession': '',
+	'listSessions': '',
+	'sessionString': ''
+
+};
+
 $( document ).ready( function() {
 	role = $.cookie( 'role' );
 	username = $.cookie( 'username' );
 	console.log( "from page load: username " + username + ", role: " + role );
 	if ( username ) {
+		roleSwitcher( role );
 		loginUIUpdate( username, role );
 	}
 
@@ -24,33 +33,8 @@ $( document ).ready( function() {
 				var status = e.hasClass( 'btn-success' );
 				var sessionid = e.attr( 'id' );
 
-				if ( status ) {
-					switch ( role ) {
-						case "attender":
-							func = 'willAttend';
-							break;
-						case "tutor":
-							func = 'signUpToTutor';
-							break;
-						case "siteLeader":
-							func = 'signUpToTutor';
-							break;
-					}
-				} else {
-					switch ( role ) {
-						case "attender":
-							func = 'cancelAttend';
-							break;
-						case "tutor":
-							func = 'cancelTutor';
-							break;
-						case "siteLeader":
-							func = 'cancelTutor';
-							break;
-					}
-				}
-
 				console.log( sessionid );
+				func = status ? roleData.addSession : roleData.deleteSession;
 				$.ajax( {
 					url: '/php/mediator.php',
 					data: {
@@ -85,6 +69,29 @@ $( document ).ready( function() {
 	} );
 
 } );
+
+function roleSwitcher( role ) {
+	switch ( role ) {
+		case "attender":
+			roleData.sessionString = "Sessions I Attend";
+			roleData.addSession = 'willAttend';
+			roleData.deleteSession = 'cancelAttend';
+			roleData.listSessions = 'displayAttendingSessions';
+			break;
+		case "tutor":
+			roleData.sessionString = "Sessions I Tutor";
+			roleData.addSession = 'signUpToTutor';
+			roleData.deleteSession = 'cancelTutor';
+			roleData.listSessions = 'displaySessions';
+			break;
+		case "siteLeader":
+			roleData.sessionString = "Sessions I Manage";
+			roleData.addSession = 'signUpToTutor';
+			roleData.deleteSession = 'cancelTutor';
+			roleData.listSessions = 'displaySessions';
+			break;
+	}
+}
 
 function loginForm() {
 	bootbox.dialog( {
@@ -163,7 +170,6 @@ function registerForm() {
 
 function loginHandler( username, password ) {
 	var session;
-	var dropdown;
 
 	$.ajax( {
 		url: '/php/mediator.php',
@@ -188,28 +194,15 @@ function loginHandler( username, password ) {
 
 function loginUIUpdate( username, role ) {
 
-	switch ( role ) {
-		case "attender":
-			session = "Sessions I Attend";
-			dropdown = "<button id='attending' class='btn dropdown-toggle pull-right' type='button' data-toggle='dropdown'>Attending<span class='caret'></span></button>";
-			break;
-		case "tutor":
-			session = "Sessions I Tutor";
-			dropdown = "<button id='attending' class='btn dropdown-toggle pull-right' type='button' data-toggle='dropdown'>Students Attending<span class='caret'></span></button>";
-			break;
-		case "siteLeader":
-			session = "Sessions I Manage";
-			break;
-	}
 	$( "#navbar-right" ).html(
 		'<div class="btn-group navbar-btn">' +
 		'<button type="button" class="btn btn-danger">' + username + '</button>' +
-		'<button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
+	'<button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
 		'<span class="caret"></span>' +
 		'<span class="sr-only">Toggle Dropdown</span>' +
 		'</button>' +
 		'<ul class="dropdown-menu">' +
-		'<li id="list-sessions"><a href="#">' + session + '</a></li>' +
+		'<li id="list-sessions"><a href="#">' + roleData.sessionString + '</a></li>' +
 		'<li id="messages"><a href="#">Message Center</a></li>' +
 		'<li role"separator" class="divider"></li>' +
 		'<li id="account"><a href="#">My Account</a></li>' +
@@ -220,7 +213,7 @@ function loginUIUpdate( username, role ) {
 
 	$( '.btn-group' ).on( 'click', '#list-sessions', function() {
 
-		userSessionList( username, role, dropdown );
+		userSessionList( username, role );
 	} );
 
 	$( '.btn-group' ).on( 'click', '#logout', function() {
@@ -245,44 +238,14 @@ function loginUIUpdate( username, role ) {
 	} );
 }
 
-function roleSwitcher( role ) {
-	switch ( role ) {
-		case "attender":
-			session = "Sessions I Attend";
-			dropdown = "<button id='attending' class='btn dropdown-toggle pull-right' type='button' data-toggle='dropdown'>Attending<span class='caret'></span></button>";
-			break;
-		case "tutor":
-			session = "Sessions I Tutor";
-			dropdown = "<button id='attending' class='btn dropdown-toggle pull-right' type='button' data-toggle='dropdown'>Students Attending<span class='caret'></span></button>";
-			break;
-		case "siteLeader":
-			session = "Sessions I Manage";
-			break;
-	}
-	return session;
-
-}
-
-function userSessionList( username, role, dropdown ) {
-	var func;
-	switch ( role ) {
-		case "attender":
-			func = 'displayAttendingSessions';
-			break;
-		case "tutor":
-			func = 'displaySessions';
-			break;
-		case "siteLeader":
-			func = 'displaySessions';
-			break;
-	}
+function userSessionList( username, role ) {
 
 	var sessionDataString;
 	$.ajax( {
 		url: '/php/mediator.php',
 		type: 'get',
 		data: {
-			'function': func
+			'function': roleData.listSessions
 		},
 		success: function( data ) {
 			console.log( "data: " + data );
@@ -307,7 +270,5 @@ function userSessionList( username, role, dropdown ) {
 			return xhr;
 		}
 	} );
-	console.log( sessionDataString );
 
-	return username;
 }
