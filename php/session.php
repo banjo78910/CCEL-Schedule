@@ -27,15 +27,14 @@ class Session {
 		echo("<div class=\"list-group-item\" id=\"session{$this->sessionID}\">");
 		if (isset($_COOKIE['username'])) {
 			if ($this->willBeAttendedBy($_COOKIE['username']) || $this->willBeTutoredBy($_COOKIE['username'])) {
-				echo("<button type='button' class='btn btn-danger pull-right delete-from-sessions'> <span class='glyphicon glyphicon-minus'> </span></button>");
+				echo("<button type='button' id='{$this->sessionID}' class='btn btn-danger pull-right delete-from-sessions'> <span class='glyphicon glyphicon-minus'> </span></button>");
 			}
 			else {
-				echo("<button type='button' class='btn btn-success pull-right add-to-sessions'> <span class='glyphicon glyphicon-plus'> </span></button>");
+				echo("<button type='button' id='{$this->sessionID}' class='btn btn-success pull-right add-to-sessions'> <span class='glyphicon glyphicon-plus'> </span></button>");
 			}
 		}
 		echo("<h4>{$this->site}: {$this->subject}</h4><h5>{$this->date} at {$this->time}</h5>");
 		$this->displaySessionTutors();
-
 		echo("</div>");
 	}
 	
