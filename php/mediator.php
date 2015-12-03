@@ -143,8 +143,8 @@ class Mediator {
 	// cancelTutor() handled by tutor interface.
 }
 
-// $_POST["username"] = "andyThursdays";
-// $_POST["password"] = "derp";
+// $_POST["username"] = "student1";
+// $_POST["password"] = "omg";
 // $_GET['sessionID'] = 3;
 // $_GET['function'] = 'displaySiteSessions';
 $med = new Mediator();
@@ -164,6 +164,9 @@ if (isset($_GET['function'])) {
 	}
 	elseif ($function == 'logout') {
 		$med->getUser()->logout();
+	}
+	elseif ($function == 'login') {
+		echo($med->getUser()->getRole());
 	}
 	/* Attender functions: */
 	elseif ($function == 'displayAttendingSessions') {
