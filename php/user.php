@@ -30,8 +30,8 @@ class User {
 	}
 	
 	public function logout() {
-		setcookie("username", null, time() - 1);
-		setcookie("role", null, time() - 1);
+		setcookie("username", null, time() - 1, '/');
+		setcookie("role", null, time() - 1, '/');
 		$this->loggedIn = false;
 	}
 	
