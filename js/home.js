@@ -16,21 +16,40 @@ $( document ).ready( function() {
 		},
 		success: function( data ) {
 			$( "#sessions" ).html( data );
-			$( ".add-to-sessions" ).on( "click", function() {
+			$( ".btn-session" ).on( "click", function() {
 				var func;
-				switch ( role ) {
-					case "attender":
-						func = 'willAttend';
-						break;
-					case "tutor":
-						func = 'signUpToTutor';
-						break;
-					case "siteLeader":
-						func = 'signUpToTutor'; //click handler for add buttons
-						break;
+
+				var e = $( event.currentTarget );
+
+				var status = e.hasClass( 'btn-success' );
+				var sessionid = e.attr( 'id' );
+
+				if ( status ) {
+					switch ( role ) {
+						case "attender":
+							func = 'willAttend';
+							break;
+						case "tutor":
+							func = 'signUpToTutor';
+							break;
+						case "siteLeader":
+							func = 'signUpToTutor';
+							break;
+					}
+				} else {
+					switch ( role ) {
+						case "attender":
+							func = 'cancelAttend';
+							break;
+						case "tutor":
+							func = 'cancelTutor';
+							break;
+						case "siteLeader":
+							func = 'cancelTutor';
+							break;
+					}
 				}
 
-				var sessionid = $( event.currentTarget ).attr( 'id' );
 				console.log( sessionid );
 				$.ajax( {
 					url: '/php/mediator.php',
@@ -39,48 +58,22 @@ $( document ).ready( function() {
 						'sessionID': sessionid
 					},
 					success( data ) {
-						var $el = $( this );
-						console.log( $el.find( 'span' ) );
-						$el.find( 'span' ).toggleClass( 'glyphicon-plus glyphicon-minus' );
-						$el.toggleClass( 'btn-success btn-danger' );
+						console.log( e );
 						console.log( func + " succeeded" );
+
+						e.addClass( status ? 'btn-danger' : 'btn-success' );
+						e.removeClass( status ? 'btn-success' : 'btn-danger' );
+
+						e.removeClass( status ? 'delete-from-sessions' : 'add-to-sessions' );
+						e.addClass( status ? 'add-to-sessions' : 'remove-from-sessions' );
+
+						e.find( 'span' ).removeClass( status ? 'glyphicon-plus' : 'glyphicon-minus' );
+						e.find( 'span' ).addClass( status ? 'glyphicon-minus' : 'glyphicon-plus' );
 					}
 
 				} );
 			} );
 
-			$( ".delete-from-sessions" ).on( "click", function() {
-				console.log( "delete" );
-				var func;
-				switch ( role ) {
-					case "attender":
-						func = 'cancelAttend';
-						break;
-					case "tutor":
-						func = 'cancelTutor';
-						break;
-					case "siteLeader":
-						func = 'cancelTutor';
-						break;
-				}
-
-				var sessionid = $( event.currentTarget ).attr( 'id' );
-				console.log( sessionid );
-				$.ajax( {
-					url: '/php/mediator.php',
-					data: {
-						'function': func,
-						'sessionID': sessionid
-					},
-					success( data ) {
-						var $el = $( this );
-						$el.find( 'span' ).toggleClass( 'glyphicon-plus glyphicon-minus' );
-						$el.toggleClass( 'btn-success btn-danger' );
-						console.log( func + " succeeded" );
-					}
-
-				} );
-			} );
 		},
 		error: function( xhr, desc, err ) {
 			console.log( xhr + " " + desc + " " + err );
