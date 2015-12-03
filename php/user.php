@@ -29,12 +29,18 @@ class User {
 		return $this->userResult["role"];
 	}
 	
+	public function logout() {
+		setcookie("username", null, time() - 1);
+		setcookie("role", null, time() - 1);
+		$this->loggedIn = false;
+	}
+	
 	private function attemptLogin() {
-		if (isset($_COOKIE["username"])) {
-			$userQuery = "select * from {$GLOBALS["database"]}.user where username = '{$_COOKIE["username"]}';";
-		}
-		elseif (isset($_POST["username"])) {
+		if (isset($_POST["username"])) {
 			$userQuery = "select * from {$GLOBALS["database"]}.user where username = '{$_POST["username"]}';";
+		}
+		elseif (isset($_COOKIE["username"])) {
+			$userQuery = "select * from {$GLOBALS["database"]}.user where username = '{$_COOKIE["username"]}';";
 		}
 		else {
 			return false;
@@ -47,6 +53,7 @@ class User {
 		/* Check password: */
 		elseif ((isset($_POST["password"]) && ($_POST["password"] == $this->userResult["password"])) || isset($_COOKIE["username"])) {
 			setcookie("username", $this->userResult["username"], time() + 3600);
+			setcookie("role", $this->userResult["role"], time() + 3600);
 			return true;
 		}
 		else {
