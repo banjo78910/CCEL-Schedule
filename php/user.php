@@ -11,7 +11,7 @@ class User {
 		$this->connection = $connection;
 		$this->userResult = null;
 		$this->loggedIn = $this->attemptLogin();
-		// echo($this->getRole());
+		echo("<div class='role' id='{$this->getRole()}'></div>");
 	}
 	
 	public function isLoggedIn() {
