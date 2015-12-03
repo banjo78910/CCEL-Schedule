@@ -143,10 +143,10 @@ class Mediator {
 	// cancelTutor() handled by tutor interface.
 }
 
-$_POST["username"] = "andyThursdays";
-$_POST["password"] = "derp";
+// $_POST["username"] = "andyThursdays";
+// $_POST["password"] = "derp";
 // $_GET['sessionID'] = 3;
-$_GET['function'] = 'displaySiteSessions';
+// $_GET['function'] = 'displaySiteSessions';
 $med = new Mediator();
 // $med->displayAllSessions();
 // $_GET['site'] = "John Hay HS";
