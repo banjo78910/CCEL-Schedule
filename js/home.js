@@ -1,6 +1,12 @@
 var username;
 var role;
 $( document ).ready( function() {
+	role = $.cookie( 'role' );
+	username = $.cookie( 'username' );
+	console.log( "from page load: " + role );
+	if ( username ) {
+
+	}
 
 	$.ajax( {
 		url: '/php/mediator.php',
@@ -10,17 +16,67 @@ $( document ).ready( function() {
 		},
 		success: function( data ) {
 			$( "#sessions" ).html( data );
-			$( "#sessions" ).on( "click", ".btn-add-to-sessions", function() {
-				var sessionid = $( event.target ).attr( 'id' );
+			$( ".add-to-sessions" ).on( "click", function() {
+				var func;
+				switch ( role ) {
+					case "attender":
+						func = 'willAttend';
+						break;
+					case "tutor":
+						func = 'signUpToTutor';
+						break;
+					case "siteLeader":
+						func = 'signUpToTutor'; //click handler for add buttons
+						break;
+				}
+
+				var sessionid = $( event.currentTarget ).attr( 'id' );
 				console.log( sessionid );
 				$.ajax( {
 					url: '/php/mediator.php',
 					data: {
-						'function': 'indicateWillAttend',
+						'function': func,
 						'sessionID': sessionid
 					},
 					success( data ) {
-						console.log( "Will attend succeeded" );
+						var $el = $( this );
+						console.log( $el.find( 'span' ) );
+						$el.find( 'span' ).toggleClass( 'glyphicon-plus glyphicon-minus' );
+						$el.toggleClass( 'btn-success btn-danger' );
+						console.log( func + " succeeded" );
+					}
+
+				} );
+			} );
+
+			$( ".delete-from-sessions" ).on( "click", function() {
+				console.log( "delete" );
+				var func;
+				switch ( role ) {
+					case "attender":
+						func = 'cancelAttend';
+						break;
+					case "tutor":
+						func = 'cancelTutor';
+						break;
+					case "siteLeader":
+						func = 'cancelTutor';
+						break;
+				}
+
+				var sessionid = $( event.currentTarget ).attr( 'id' );
+				console.log( sessionid );
+				$.ajax( {
+					url: '/php/mediator.php',
+					data: {
+						'function': func,
+						'sessionID': sessionid
+					},
+					success( data ) {
+						var $el = $( this );
+						$el.find( 'span' ).toggleClass( 'glyphicon-plus glyphicon-minus' );
+						$el.toggleClass( 'btn-success btn-danger' );
+						console.log( func + " succeeded" );
 					}
 
 				} );
@@ -127,10 +183,8 @@ function loginHandler( username, password ) {
 			'password': password
 		},
 		success: function( data ) {
-			role = data;
+			role = $.cookie( 'role' );
 			console.log( role );
-			var session = roleSwitcher( role );
-
 			switch ( role ) {
 				case "attender":
 					session = "Sessions I Attend";
