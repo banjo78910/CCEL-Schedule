@@ -25,7 +25,14 @@ class Session {
 	
 	public function display() {
 		echo("<div class=\"list-group-item\" id=\"session{$this->sessionID}\">");
-		echo("<button type='button' class='btn btn-success pull-right'> <span class='glyphicon glyphicon-plus'> </span></button>");
+		if (isset($_COOKIE['username'])) {
+			if ($this->willBeAttendedBy($_COOKIE['username'])) {
+				echo("<button type='button' class='btn btn-success pull-right'> <span class='glyphicon glyphicon-plus'> </span></button>");
+			}
+			else {
+				echo("<button type='button' class='btn btn-danger pull-right'> <span class='glyphicon glyphicon-minus'> </span></button>");
+			}
+		}
 		echo("<h4>{$this->site}: {$this->subject}</h4><h5>{$this->date} at {$this->time}</h5>");
 		$this->displaySessionTutors();
 
@@ -77,6 +84,17 @@ class Session {
 		$query = "select firstName from {$GLOBALS["database"]}.user where username in ({$narrowQuery})";
 		$tutors = $this->connection->query($query);
 		return $tutors;
+	}
+	
+	private function willBeAttendedBy($username) {
+		$thingToReturn = false;
+		$attenders = $this->getSessionAttenders();
+		while ($row = $attenders->fetch_assoc()) {
+			if ($row['userID'] == $username) {
+				$thingToReturn = true;
+			}
+		}
+		return $thingToReturn;
 	}
 }
 ?>
