@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>CCEL Scheduler - Message Center</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <!-- jquery -->
+    <script src="/js/jquery.cookie.js"></script>
+    <!-- //jquery cookie plugin -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <!-- bootstrap js -->
+    <script src="/js/bootbox.min.js"></script>
+    <!-- //bootbox -->
+    <script src="//code.jquery.com/qunit/qunit-1.20.0.js"></script>
+    <!-- //QUnit js-->
+    <script src="/js/home.js"></script>
+    <script src="/js/messages.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <!-- //bootstrap css -->
+    <link rel="stylesheet" href="//code.jquery.com/qunit/qunit-1.20.0.css">
+    <!-- //QUnit css -->
+    <link rel="stylesheet" type="text/css" href="../css/home.css">
+</head>
+
+<body>
+    <!-- top navbar -->
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">CCEL</a>
+            </div>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <form class="navbar-form navbar-left" role="search">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search for Sessions">
+                    </div>
+                    <button type="submit" class="btn btn-default">Submit</button>
+                </form>
+                <div id="navbar-right" class="navbar-right">
+                    <ul class="nav navbar-nav navbar-right">
+                        <button class="btn btn-default navbar-btn" id="login-student">Login</button>
+                    </ul>
+                </div>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-3 col-md-2">
+            </div>
+            <div class="col-sm-9 col-md-10">
+                <button type="button" class="btn btn-default" data-toggle="tooltip" title="Refresh">
+                    <span class="glyphicon glyphicon-refresh"></span></button>
+                <!-- Single button -->
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-sm-3 col-md-2">
+                <a href="#" class="btn btn-danger btn-sm btn-block" id='compose' role="button"><i class="glyphicon glyphicon-edit"></i> Compose</a>
+                <hr>
+                <ul class="nav nav-pills nav-stacked">
+                    <li class="active"><a href="#"><span class="badge pull-right">32</span> All Messages </a>
+                    </li>
+                    <li><a href="#">From Students</a></li>
+                    <li><a href="#">From Tutors</a></li>
+                    <li><a href="#">From Administrators</a></li>
+                </ul>
+            </div>
+            <div class="col-sm-9 col-md-10">
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#home" data-toggle="tab"><span class="glyphicon glyphicon-inbox">
+                </span>All Messages</a></li>
+                    </span>
+                    </a>
+                    </li>
+                </ul>
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div class="tab-pane fade in active" id="home">
+                        <div class="list-group" id='message-list'>
+                            <a href="#" class="list-group-item">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox">
+                                    </label>
+                                </div>
+                                <span class="glyphicon glyphicon-star-empty"></span><span class="name" style="min-width: 120px;
+                                display: inline-block;">Mark Otto</span> <span class="">Nice work on the lastest version</span>
+                                <span class="text-muted" style="font-size: 11px;">- More content here</span> <span class="badge">12:10 AM</span> <span class="pull-right"><span class="glyphicon glyphicon-paperclip">
+                                </span></span>
+                            </a>
+                            <a href="#" class="list-group-item">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox">
+                                    </label>
+                                </div>
+                                <span class="glyphicon glyphicon-star-empty"></span><span class="name" style="min-width: 120px;
+                                        display: inline-block;">Jason Markus</span> <span class="">This is big title</span>
+                                <span class="text-muted" style="font-size: 11px;">- I saw that you had..</span> <span class="badge">12:09 AM</span> <span class="pull-right">
+                            </a>
+                            <a href="#" class="list-group-item read">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox">
+                                    </label>
+                                </div>
+                                <span class="glyphicon glyphicon-star"></span><span class="name" style="min-width: 120px;
+                                                display: inline-block;">Jane Patel</span> <span class="">This is big title</span>
+                                <span class="text-muted" style="font-size: 11px;">- Hi hello how r u ?</span> <span class="badge">11:30 PM</span> <span class="pull-right"><span class="glyphicon glyphicon-paperclip">
+                                                </span></span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade in" id="profile">
+                        <div class="list-group">
+                            <div class="list-group-item">
+                                <span class="text-center">This tab is empty.</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade in" id="messages">
+                        ...</div>
+                    <div class="tab-pane fade in" id="settings">
+                        This tab is empty.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

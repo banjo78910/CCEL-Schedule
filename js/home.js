@@ -9,13 +9,13 @@ var roleData = {
 };
 
 $( document ).ready( function() {
-	role = $.cookie( 'role' );
-	username = $.cookie( 'username' );
-	console.log( "from page load: username " + username + ", role: " + role );
-	if ( username ) {
-		roleSwitcher( role );
-		loginUIUpdate( username, role );
-	}
+			role = $.cookie( 'role' );
+			username = $.cookie( 'username' );
+			console.log( "from page load: username " + username + ", role: " + role );
+			if ( username ) {
+				roleSwitcher( role );
+				loginUIUpdate( username, role );
+			}
 
 	$.ajax( {
 		url: '/php/mediator.php',
@@ -197,13 +197,13 @@ function loginUIUpdate( username, role ) {
 	$( "#navbar-right" ).html(
 		'<div class="btn-group navbar-btn">' +
 		'<button type="button" class="btn btn-danger">' + username + '</button>' +
-	'<button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
+		'<button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
 		'<span class="caret"></span>' +
 		'<span class="sr-only">Toggle Dropdown</span>' +
 		'</button>' +
 		'<ul class="dropdown-menu">' +
 		'<li id="list-sessions"><a href="#">' + roleData.sessionString + '</a></li>' +
-		'<li id="messages"><a href="#">Message Center</a></li>' +
+		'<li id="messages"><a href="/html/messagecenter.html">Message Center</a></li>' +
 		'<li role"separator" class="divider"></li>' +
 		'<li id="account"><a href="#">My Account</a></li>' +
 		'<li id="logout"><a href="#">Log Out</a></li>' +
