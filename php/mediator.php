@@ -1,19 +1,17 @@
 <?php
-/* - shade every other session in displayAllSessions
- * - generate page divs in displayAllSessions
- * - make sure all pages redirect to home page and inform the user if their login cookie expired
- * - handle additional roles in specializeLogin
+/* - make sure html only displays buttons for operations which the user is allowed to perform, 
+ *   based on their role
+ * - Make echoed usernames a clickable link that calls a js script, bringing up a pop-up with the user's info
+ * - Remove from database sessions that have already occurred.
+ * - interface with messaging system
+ * - static method to display a username link, which calls some script to display the user's info
  */
-
+include("dbglobals.php");
 include("user.php");
 include("tutor.php");
 include("attender.php");
-include("supervisor.php");
-
-$server = "localhost";
-$dbUsername = "root";
-$dbPassword = "root";
-$database = "sessions";
+include("siteLeader.php");
+include("session.php");
 
 class Mediator {
 	/* Holds a mysqli object: */
@@ -30,7 +28,7 @@ class Mediator {
 	public function __construct() {
 		$this->connection = new mysqli($GLOBALS["server"], $GLOBALS["dbUsername"], $GLOBALS["dbPassword"]);
 		$this->sessions = null;
-		$this->resultsPerPage = 2;
+		$this->resultsPerPage = 5;
 		$this->user = new User($this->connection);
 		$this->specializedInteractor = null;
 		if ($this->user->isLoggedIn()) {
@@ -42,37 +40,23 @@ class Mediator {
 		return $this->user;
 	}
 	
-	public function logout() {
-		setcookie("username", null, time() - 1);
-	}
-	
 	public function displayAllSessions() {
-		$sessionQuery = "select * from {$GLOBALS["database"]}.session;";
+		$sessionQuery = "select sessionID from {$GLOBALS["database"]}.session;";
 		$this->sessions = $this->connection->query($sessionQuery);
 		/* Setup for pagination: */
 		$i = 0;
 		$this->genPageSelector();
-		echo("returned");
 		echo("<div class=\"page\" id=page1>");
 		while (($row = $this->sessions->fetch_assoc()) != null) {
 			/* If a page worth of results has been displayed, start a new "page" div: */
 			if ($i > 0 && $i % $this->resultsPerPage == 0) {
                 echo("</div><div class=\"page\" id=page" . ($i / $this->resultsPerPage + 1) . ">");
             }
-			mediator::displaySession($row);
+            $session = new Session($row['sessionID']);
+            $session->display();
 			$i++; // Keeps track of how many results have been displayed, for pagination.
 		}
 		echo("</div>"); // End of div containing the very last page worth of results.
-	}
-	
-	public static function displaySession($row) {
-		$sessionID = $row["sessionID"];
-		$sessionSite = $row["site"];
-		$sessionTime = $row["date"] . " at " . $row["time"];
-		$sessionSubject = "grade " . $row["gradeLevel"] . " " . $row["subject"];
-		$tutorUsername = $row["tutorUsername"];
-		$tutorName = $row["tutorName"];
-		echo("<div class=\"list-group-item\" id=\"session{$sessionID}\"><button id=\"{$sessionID}\" class='btn dropdown-toggle btn-add-to-sessions pull-right' data-toggle='dropdown'><span class='caret'></span>I Will Attend </button> <h4>{$sessionSite}: {$sessionSubject}</h4><h5>{$sessionTime}</h5><h5>{$tutorName}</h5></div>");
 	}
 	
 	private function specializeLogin() {
@@ -83,7 +67,13 @@ class Mediator {
 		elseif ($role == "tutor") {
 			$this->specializedInteractor = new Tutor($this->user->getUsername(), $this->connection);
 		}
+		elseif ($role == "siteLeader") {
+			$this->specializedInteractor = new SiteLeader($this->user->getUsername(), $this->connection);
+		}
 		elseif ($role == "supervisor") {
+			
+		}
+		elseif ($role == "host") {
 			
 		}
 	}
@@ -104,65 +94,109 @@ class Mediator {
     }
 	
 	/* Attender interface: */
-	public function retrieveAttendingSessions() {
-		$this->specializedInteractor->retrieveAttendingSessions();
+	public function displayAttendingSessions() {
+		$this->specializedInteractor->displayAttendingSessions();
 	}
 	
 	public function willAttend($sessionID) {
 		$this->specializedInteractor->willAttend($sessionID);
 	}
 	
+	public function cancelAttend($sessionID) {
+		$this->specializedInteractor->cancelAttend($sessionID);
+	}
+	
 	/* Tutor interface: */
-	public function createSession($site, $date, $time, $subject, $gradeLevel, $tutorUsername, $tutorName) {
-		$this->specializedInteractor->createSession($site, $date, $time, $subject, $gradeLevel, $tutorUsername, $tutorName);
+	public function signUpToTutor($sessionID) {
+		$this->specializedInteractor->signUpToTutor($sessionID);
+	}
+	
+	public function cancelTutor($sessionID) {
+		$this->specializedInteractor->cancelTutor($sessionID);
+	}
+	
+	public function displaySessions() {
+		$this->specializedInteractor->displaySessions();
+	}
+	
+	/* Site leader interface: */
+	public function createSession($date, $time, $subject, $gradeLevel) {
+		$this->specializedInteractor->createSession($date, $time, $subject, $gradeLevel);
+	}
+	
+	public function modifySession($sessionID, $date, $time, $subject, $gradeLevel) {
+		$this->specializedInteractor->modifySession($sessionID, $date, $time, $subject, $gradeLevel);
 	}
 	
 	public function cancelSession($sessionID) {
 		$this->specializedInteractor->cancelSession($sessionID);
 	}
 	
-	public function getAttendingUsers($sessionID) {
-		$this->specializedInteractor->getAttendingUsers($sessionID);
+	// displaySessions() handled in tutor interface.
+	
+	public function displaySiteSessions() {
+		$this->specializedInteractor->displaySiteSessions();
 	}
+	
+	// signUpToTutor() handled by tutor interface.
+	
+	// cancelTutor() handled by tutor interface.
 }
 
-// $_POST["username"] = "ben";
-// $_POST["password"] = "lol";
-// $_GET['sessionID'] = 4;
-// $_GET['function'] = 'displayAll';
+$_POST["username"] = "andyThursdays";
+$_POST["password"] = "derp";
+// $_GET['sessionID'] = 3;
+$_GET['function'] = 'displaySiteSessions';
 $med = new Mediator();
+// $med->displayAllSessions();
+// $_GET['site'] = "John Hay HS";
+// $_GET['date'] = "12-01-2015";
+// $_GET['time'] = "8:30PM";
+// $_GET['subject'] = "programming";
+// $_GET['gradeLevel'] = "12";
+
 
 if (isset($_GET['function'])) {
 	$function = $_GET['function'];
-	if ($function == 'displayAll') {
+	/* Mediator functions: */
+	if ($function == 'displayAllSessions') {
 		$med->displayAllSessions();
 	}
 	elseif ($function == 'logout') {
-		$med->logout();
+		$med->getUser()->logout();
 	}
-	elseif ($function == 'retrieveWillAttend') {
-		$med->retrieveAttendingSessions();
+	/* Attender functions: */
+	elseif ($function == 'displayAttendingSessions') {
+		$med->displayAttendingSessions();
 	}
-	elseif ($function == 'indicateWillAttend') {
+	elseif ($function == 'willAttend') {
 		$med->willAttend($_GET['sessionID']);
 	}
-	elseif ($function == 'create') {
-		$site = $_GET['site'];
-		$date = $_GET['date'];
-		$time = $_GET['time'];
-		$subject = $_GET['subject'];
-		$gradeLevel = $_GET['gradeLevel'];
-		$tutorUsername = $med->getUser()->getUsername();
-		$tutorName = $med->getUser()->getName();
-		$med->createSession($site, $date, $time, $subject, $gradeLevel, $tutorUsername, $tutorName);
+	elseif ($function == 'cancelAttend') {
+		$med->cancelAttend($_GET['sessionID']);
 	}
-	elseif ($function == 'cancel') {
-		$sessionID = $_GET['sessionID'];
-		$med->cancelSession($sessionID);
+	/* Tutor functions: */
+	elseif ($function == 'signUpToTutor') {
+		$med->signUpToTutor($_GET['sessionID']);
 	}
-	elseif ($function == 'retrieveAttenders') {
-		$sessionID = $_GET['sessionID'];
-		$med->getAttendingUsers($sessionID);
+	elseif ($function == 'cancelTutor') {
+		$med->cancelTutor($_GET['sessionID']);
+	}
+	elseif ($function == 'displaySessions') {
+		$med->displaySessions();
+	}
+	/* Site leader functions: */
+	elseif ($function == 'createSession') {
+		$med->createSession($_GET['date'], $_GET['time'], $_GET['subject'], $_GET['gradeLevel']);
+	}
+	elseif ($function == 'modifySession') {
+		$med->modifySession($_GET['sessionID'], $_GET['date'], $_GET['time'], $_GET['subject'], $_GET['gradeLevel']);
+	}
+	elseif ($function == 'cancelSession') {
+		$med->cancelSession($_GET['sessionID']);
+	}
+	elseif ($function == 'displaySiteSessions') {
+		$med->displaySiteSessions();
 	}
 }
 ?>
