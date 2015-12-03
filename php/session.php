@@ -26,7 +26,7 @@ class Session {
 	public function display() {
 		echo("<div class=\"list-group-item\" id=\"session{$this->sessionID}\">");
 		if (isset($_COOKIE['username'])) {
-			if ($this->willBeAttendedBy($_COOKIE['username'])) {
+			if ($this->willBeAttendedBy($_COOKIE['username']) || $this->willBeTutoredBy($_COOKIE['username'])) {
 				echo("<button type='button' class='btn btn-danger pull-right'> <span class='glyphicon glyphicon-minus'> </span></button>");
 			}
 			else {
@@ -91,6 +91,17 @@ class Session {
 		$attenders = $this->getSessionAttenders();
 		while ($row = $attenders->fetch_assoc()) {
 			if ($row['userID'] == $username) {
+				$thingToReturn = true;
+			}
+		}
+		return $thingToReturn;
+	}
+	
+	private function willBeTutoredBy($username) {
+		$thingToReturn = false;
+		$tutors = $this->getSessionTutors();
+		while ($row = $tutors->fetch_assoc()) {
+			if ($row['tutorID'] == $username) {
 				$thingToReturn = true;
 			}
 		}
