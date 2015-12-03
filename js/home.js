@@ -1,11 +1,12 @@
 var username;
+var role;
 $( document ).ready( function() {
 
 	$.ajax( {
 		url: '/php/mediator.php',
 		type: 'get',
 		data: {
-			'function': 'displayAll'
+			'function': 'displayAllSessions'
 		},
 		success: function( data ) {
 			$( "#sessions" ).html( data );
@@ -51,18 +52,6 @@ function loginForm( loginType ) {
 			'<label class="col-md-4" control-label" for="password">Password</label>' +
 			'<input id="password" name="password" type="password" class="form-control form input-md">' +
 			'</div> ' +
-			'<div class="accountType form-group" >' +
-			'<div class="radio radio-inline">' +
-			'<label><input type="radio" name="accType" value="Student"> Student </label>' +
-			'</div>' +
-			'<div class="radio radio-inline">' +
-			'<label><input type="radio" name="accType" value="Tutor"> Tutor </label>' +
-			'</div>' +
-			'<div class="radio radio-inline">' +
-			'<label><input type="radio" name="accType" value="Admin"> Admin </label>' +
-			'</div>' +
-			'</div>' +
-
 			'</form> ' +
 			'</div> ',
 		buttons: {
@@ -79,10 +68,9 @@ function loginForm( loginType ) {
 				callback: function() {
 					username = $( "#username" ).val();
 					var password = $( "#password" ).val();
-					var accountType = $( "input[name=accType]:checked" ).val();
-					console.log( username + password + accountType );
-					loginHandler( username, password, accountType );
-					return ( username, password, accountType );
+					console.log( username + password );
+					loginHandler( username, password );
+					return ( username, password );
 				}
 			}
 		}
@@ -127,27 +115,45 @@ function registerForm( loginType ) {
 
 }
 
-function loginHandler( username, password, accountType ) {
+function loginHandler( username, password ) {
 	var session;
 	var dropdown;
-	switch ( accountType ) {
-		case "Student":
-			session = "Sessions I Attend";
-			dropdown = "<button id='attending' class='btn dropdown-toggle pull-right' type='button' data-toggle='dropdown'>Attending<span class='caret'></span></button>";
-			break;
-		case "Tutor":
-			session = "Sessions I Tutor";
-			dropdown = "<button id='attending' class='btn dropdown-toggle pull-right' type='button' data-toggle='dropdown'>Students Attending<span class='caret'></span></button>";
-			break;
-		case "Admin":
-			session = "Sessions I Manage";
-			break;
-	}
+
+	$.ajax( {
+		url: '/php/mediator.php',
+		type: 'post',
+		data: {
+			'username': username,
+			'password': password
+		},
+		success: function( data ) {
+			role = data;
+			console.log( role );
+			var session = roleSwitcher( role );
+
+			switch ( role ) {
+				case "attender":
+					session = "Sessions I Attend";
+					dropdown = "<button id='attending' class='btn dropdown-toggle pull-right' type='button' data-toggle='dropdown'>Attending<span class='caret'></span></button>";
+					break;
+				case "tutor":
+					session = "Sessions I Tutor";
+					dropdown = "<button id='attending' class='btn dropdown-toggle pull-right' type='button' data-toggle='dropdown'>Students Attending<span class='caret'></span></button>";
+					break;
+				case "siteLeader":
+					session = "Sessions I Manage";
+					break;
+			}
+
+			return data;
+		},
+		error: function( xhr, desc, err ) {
+			console.log( xhr + " " + desc + " " + err );
+			return xhr;
+		}
+	} );
 
 	$( "#navbar-right" ).html(
-		'<div class="btn-group navbar-btn">' +
-		'<button type="button" class="btn btn-primary" id="my-sessions"> My Sessions </button>' +
-		'</div>' +
 		'<div class="btn-group navbar-btn">' +
 		'<button type="button" class="btn btn-danger">' + username + '</button>' +
 		'<button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
@@ -163,13 +169,14 @@ function loginHandler( username, password, accountType ) {
 		'</ul>' +
 		'</div>'
 	);
+
 	$( '.btn-group' ).on( 'click', '#sessions', function() {
 
-		userSessionList( username, accountType, dropdown );
+		userSessionList( username, role, dropdown );
 	} );
 
 	$( '.btn-group' ).on( 'click', '#logout', function() {
-
+		console.log( "logout clicked" );
 		$.ajax( {
 			url: '/php/mediator.php',
 			type: 'get',
@@ -177,39 +184,58 @@ function loginHandler( username, password, accountType ) {
 				'function': 'logout'
 			},
 			success: function( data ) {
-				return data;
+				console.log( data );
+				console.log( "Logout" );
+				window.location.reload();
 			},
 			error: function( xhr, desc, err ) {
 				console.log( xhr + " " + desc + " " + err );
 				return xhr;
 			}
 		} );
+
 	} );
 
-	$.ajax( {
-		url: '/php/mediator.php',
-		type: 'post',
-		data: {
-			'username': username,
-			'password': password
-		},
-		success: function( data ) {
-			return data;
-		},
-		error: function( xhr, desc, err ) {
-			console.log( xhr + " " + desc + " " + err );
-			return xhr;
-		}
-	} );
 }
 
-function userSessionList( username, accountType, dropdown ) {
+function roleSwitcher( role ) {
+	switch ( role ) {
+		case "attender":
+			session = "Sessions I Attend";
+			dropdown = "<button id='attending' class='btn dropdown-toggle pull-right' type='button' data-toggle='dropdown'>Attending<span class='caret'></span></button>";
+			break;
+		case "tutor":
+			session = "Sessions I Tutor";
+			dropdown = "<button id='attending' class='btn dropdown-toggle pull-right' type='button' data-toggle='dropdown'>Students Attending<span class='caret'></span></button>";
+			break;
+		case "siteLeader":
+			session = "Sessions I Manage";
+			break;
+	}
+	return session;
+
+}
+
+function userSessionList( username, role, dropdown ) {
+	var func;
+	switch ( role ) {
+		case "attender":
+			func = 'displayAttendingSessions';
+			break;
+		case "tutor":
+			func = 'displaySessions';
+			break;
+		case "siteLeader":
+			func = 'displaySessions';
+			break;
+	}
+
 	var sessionDataString;
 	$.ajax( {
 		url: '/php/mediator.php',
 		type: 'get',
 		data: {
-			'function': 'retrieveWillAttend'
+			'function': func
 		},
 		success: function( data ) {
 			console.log( "data: " + data );
