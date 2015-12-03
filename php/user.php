@@ -11,7 +11,7 @@ class User {
 		$this->connection = $connection;
 		$this->userResult = null;
 		$this->loggedIn = $this->attemptLogin();
-		if (!($this->loggedIn)) {
+		if (!(isset($_GET['function']))) {
 			echo($this->getRole());
 		}
 	}
