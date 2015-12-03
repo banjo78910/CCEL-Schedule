@@ -3,9 +3,9 @@ var role;
 $( document ).ready( function() {
 	role = $.cookie( 'role' );
 	username = $.cookie( 'username' );
-	console.log( "from page load: " + role );
+	console.log( "from page load: username " + username + ", role: " + role );
 	if ( username ) {
-
+		loginUIUpdate( username, role );
 	}
 
 	$.ajax( {
@@ -83,15 +83,12 @@ $( document ).ready( function() {
 	$( "#login-student" ).click( function() {
 		loginForm( "Student" );
 	} );
-	$( "#login-tutor" ).click( function() {
-		loginForm( "Tutor" );
-	} );
 
 } );
 
-function loginForm( loginType ) {
+function loginForm() {
 	bootbox.dialog( {
-		title: loginType + " Login",
+		title: "Log in to your Account",
 		message: '<form class="form-inline"> ' +
 			'<div class="form-group"> ' +
 			'<label class="col-md-4 control-label" for="name">Username</label> ' +
@@ -108,7 +105,7 @@ function loginForm( loginType ) {
 				label: "Register",
 				className: "btn-default",
 				callback: function() {
-					registerForm( loginType );
+					registerForm();
 				}
 			},
 			login: {
@@ -119,14 +116,14 @@ function loginForm( loginType ) {
 					var password = $( "#password" ).val();
 					console.log( username + password );
 					loginHandler( username, password );
-					return ( username, password );
+					window.location.reload();
 				}
 			}
 		}
 	} );
 }
 
-function registerForm( loginType ) {
+function registerForm() {
 	bootbox.dialog( {
 		title: "Register",
 		message: '<div class="col-md-12">' +
@@ -154,13 +151,13 @@ function registerForm( loginType ) {
 				label: "Register",
 				className: "btn-default",
 				callback: function() {
-					console.log( loginType );
+					console.log();
 
 				}
 			},
 		}
 	} );
-	return loginType;
+	return null;
 
 }
 
@@ -178,21 +175,8 @@ function loginHandler( username, password ) {
 		success: function( data ) {
 			role = $.cookie( 'role' );
 			console.log( role );
-			switch ( role ) {
-				case "attender":
-					session = "Sessions I Attend";
-					dropdown = "<button id='attending' class='btn dropdown-toggle pull-right' type='button' data-toggle='dropdown'>Attending<span class='caret'></span></button>";
-					break;
-				case "tutor":
-					session = "Sessions I Tutor";
-					dropdown = "<button id='attending' class='btn dropdown-toggle pull-right' type='button' data-toggle='dropdown'>Students Attending<span class='caret'></span></button>";
-					break;
-				case "siteLeader":
-					session = "Sessions I Manage";
-					break;
-			}
 
-			return data;
+			return role;
 		},
 		error: function( xhr, desc, err ) {
 			console.log( xhr + " " + desc + " " + err );
@@ -200,6 +184,23 @@ function loginHandler( username, password ) {
 		}
 	} );
 
+}
+
+function loginUIUpdate( username, role ) {
+
+	switch ( role ) {
+		case "attender":
+			session = "Sessions I Attend";
+			dropdown = "<button id='attending' class='btn dropdown-toggle pull-right' type='button' data-toggle='dropdown'>Attending<span class='caret'></span></button>";
+			break;
+		case "tutor":
+			session = "Sessions I Tutor";
+			dropdown = "<button id='attending' class='btn dropdown-toggle pull-right' type='button' data-toggle='dropdown'>Students Attending<span class='caret'></span></button>";
+			break;
+		case "siteLeader":
+			session = "Sessions I Manage";
+			break;
+	}
 	$( "#navbar-right" ).html(
 		'<div class="btn-group navbar-btn">' +
 		'<button type="button" class="btn btn-danger">' + username + '</button>' +
@@ -208,7 +209,7 @@ function loginHandler( username, password ) {
 		'<span class="sr-only">Toggle Dropdown</span>' +
 		'</button>' +
 		'<ul class="dropdown-menu">' +
-		'<li id="sessions"><a href="#">' + session + '</a></li>' +
+		'<li id="list-sessions"><a href="#">' + session + '</a></li>' +
 		'<li id="messages"><a href="#">Message Center</a></li>' +
 		'<li role"separator" class="divider"></li>' +
 		'<li id="account"><a href="#">My Account</a></li>' +
@@ -217,7 +218,7 @@ function loginHandler( username, password ) {
 		'</div>'
 	);
 
-	$( '.btn-group' ).on( 'click', '#sessions', function() {
+	$( '.btn-group' ).on( 'click', '#list-sessions', function() {
 
 		userSessionList( username, role, dropdown );
 	} );
@@ -242,7 +243,6 @@ function loginHandler( username, password ) {
 		} );
 
 	} );
-
 }
 
 function roleSwitcher( role ) {
