@@ -1,7 +1,5 @@
 <?php
-/* - make sure html only displays buttons for operations which the user is allowed to perform, 
- *   based on their role
- * - Make echoed usernames a clickable link that calls a js script, bringing up a pop-up with the user's info
+/* - Make echoed usernames a clickable link that calls a js script, bringing up a pop-up with the user's info
  * - Remove from database sessions that have already occurred.
  * - interface with messaging system
  * - static method to display a username link, which calls some script to display the user's info
@@ -93,6 +91,19 @@ class Mediator {
         echo("</div><br>");
     }
 	
+	/* Messaging interface: */
+	public function getJsonMessages() {
+		$this->getUser()->getMessenger()->getJsonMessages();
+	}
+	
+	public function sendJsonMessage($jsonString) {
+		$this->getUser()->getMessenger()->sendJsonMessage($jsonString);
+	}
+	
+	public function sendMessage($recipient, $subject, $content) {
+		$this->getUser()->getMessenger()->sendMessage($recipient, $subject, $content);
+	}
+	
 	/* Attender interface: */
 	public function displayAttendingSessions() {
 		$this->specializedInteractor->displayAttendingSessions();
@@ -143,10 +154,13 @@ class Mediator {
 	// cancelTutor() handled by tutor interface.
 }
 
-// $_POST["username"] = "student1";
-// $_POST["password"] = "omg";
+// $_POST["username"] = "andyThursdays";
+// $_POST["password"] = "derp";
 // $_GET['sessionID'] = 3;
-// $_GET['function'] = 'displaySiteSessions';
+// $_GET['function'] = 'getJsonMessages';
+// $_GET['recipient'] = 'ben';
+// $_GET['subject'] = 'test message';
+// $_GET['content'] = 'i hope to god this works ben';
 $med = new Mediator();
 // $med->displayAllSessions();
 // $_GET['site'] = "John Hay HS";
@@ -164,6 +178,15 @@ if (isset($_GET['function'])) {
 	}
 	elseif ($function == 'logout') {
 		$med->getUser()->logout();
+	}
+	elseif ($function == 'getJsonMessages') {
+		$med->getJsonMessages();
+	}
+	elseif ($function == 'sendJsonMessage') {
+		$med->sendJsonMessage($_GET['jsonString']);
+	}
+	elseif ($function == 'sendMessage') {
+		$med->sendMessage($_GET['recipient'], $_GET['subject'], $_GET['content']);
 	}
 	/* Attender functions: */
 	elseif ($function == 'displayAttendingSessions') {
