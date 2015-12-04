@@ -109,6 +109,7 @@ class SiteLeader {
 			while ($row = $sessions->fetch_assoc()) {
 				$session = new Session($row['sessionID']);
 				$session->display();
+				$session->displaySessionAttenders();
 			}
 		}
 	}
