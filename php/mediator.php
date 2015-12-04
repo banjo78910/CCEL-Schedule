@@ -93,9 +93,8 @@ class Mediator {
 	private function genPageSelector() {
         $numPages = ceil($this->sessions->num_rows / $this->resultsPerPage);
         $i = 1;
-        echo("<br><div id=\"buttonholder\"><b>$numPages</b> pages total. ");
         while ($i <= $numPages) {
-            echo("<div class=\"pagebutton\" id=\"pagebutton$i\">$i</div> ");
+            echo("<button type='button' class='pagebutton btn btn-default' id=\"pagebutton$i\">$i</button> ");
             $i++;
         }
         // echo("<div style=\"float:right;\">
