@@ -1,0 +1,7 @@
+	var data = {
+	    'sender': 'UserS',
+	    'recepient': 'UserR',
+	    'subject': 'Some Text',
+	    'message': 'some message text',
+	    'timestamp': '12-05-23'
+	};
