@@ -51,7 +51,7 @@ class Messenger {
 		$messages = $this->getMessages();
 		while ($row = $messages->fetch_assoc()) {
 			$jsonMessage = array();
-			$jsonMessage = array("senderID" => $row['senderID'], "recipientID" => $row['recipientID'], "subject" => $row['subject'], "content" => $row['content']);
+			$jsonMessage = array("senderID" => $row['senderID'], "recipientID" => $row['recipientID'], "subject" => $row['subject'], "message" => $row['content']);
 			array_push($jsonMessageArray, $jsonMessage);
 		}
 		echo(json_encode($jsonMessageArray));
