@@ -1,16 +1,6 @@
 <?php
 include("dbglobals.php");
 
-/*
-	var data = {
-	    'sender': 'UserS',
-	    'recepient': 'UserR',
-	    'subject': 'Some Text',
-	    'message': 'some message text',
-	    'timestamp': '12-05-23'
-	};
-*/
-
 class Messenger {
 	private $connection;
 	private $username;
@@ -24,21 +14,24 @@ class Messenger {
 		$this->role = $roleResult['role'];
 	}
 	
-	/*
 	public function getAllowedRecipients() {
 		$allowedRecipientsArray = array();
 		if ($this->role == 'attender') {
 			$query = "select username from {$GLOBALS['database']}.user where role = 'tutor' or role = 'siteLeader'";
 			$allowedRecipients = $this->connection->query($query);
 			while ($row = $allowedRecipients->fetch_assoc()) {
-				
+				array_push($allowedRecipientsArray, $row['username']);
 			}
 		}
 		else {
-			
+			$query = "select username from {$GLOBALS['database']}.user";
+			$allowedRecipients = $this->connection->query($query);
+			while ($row = $allowedRecipients->fetch_assoc()) {
+				array_push($allowedRecipientsArray, $row['username']);
+			}
 		}
+		echo(json_encode($allowedRecipientsArray));
 	}
-	*/
 	
 	public function getMessages() {
 		$query = "select * from {$GLOBALS['database']}.message where recipientID = '{$this->username}'";
@@ -51,7 +44,7 @@ class Messenger {
 		$messages = $this->getMessages();
 		while ($row = $messages->fetch_assoc()) {
 			$jsonMessage = array();
-			$jsonMessage = array("senderID" => $row['senderID'], "recipientID" => $row['recipientID'], "subject" => $row['subject'], "message" => $row['content']);
+			$jsonMessage = array("senderID" => $row['senderID'], "recipientID" => $row['recipientID'], "subject" => $row['subject'], "message" => $row['content'], "messageID" => $row['messageID']);
 			array_push($jsonMessageArray, $jsonMessage);
 		}
 		echo(json_encode($jsonMessageArray));
@@ -75,6 +68,11 @@ class Messenger {
 			$query = "insert into {$GLOBALS['database']}.message values ('{$this->username}', '{$recipient}', '{$subject}', '{$content}', {$id})";
 			$this->connection->query($query);
 		}
+	}
+	
+	public function deleteMessage($messageID) {
+		$query = "delete from {$GLOBALS["database"]}.message where messageID = {$messageID}";
+		$this->connection->query($query);
 	}
 }
 ?>
