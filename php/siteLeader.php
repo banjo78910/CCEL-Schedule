@@ -29,6 +29,14 @@ class SiteLeader {
 	}
 	
 	/**
+	 * Add a session to the session table using JSON.
+	 */
+	 public function createJsonSession($jsonString) {
+		 $sessionInfo = json_decode($jsonString, true);
+		 $this->createSession($sessionInfo['date'], $sessionInfo['time'], $sessionInfo['subject'], $sessionInfo['gradeLevel']);
+	 }
+	
+	/**
 	 * Modify a session by deleting it, creating a new session, and transferring over tutors and attenders.
 	 */
 	public function modifySession($sessionID, $date, $time, $subject, $gradeLevel) {
