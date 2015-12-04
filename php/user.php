@@ -1,4 +1,6 @@
 <?php
+include("messenger.php");
+
 class User {
 	/* Holds a mysqli object: */
 	private $connection;
@@ -6,11 +8,16 @@ class User {
 	private $loggedIn;
 	/* Holds information about the user from the database: */
 	private $userResult;
+	/* Holds this user's messenger: */
+	private $messenger;
 	
 	public function __construct($connection) {
 		$this->connection = $connection;
 		$this->userResult = null;
 		$this->loggedIn = $this->attemptLogin();
+		if ($this->loggedIn) {
+			$this->messenger = new Messenger($this->userResult['username']);
+		}
 	}
 	
 	public function isLoggedIn() {
@@ -27,6 +34,10 @@ class User {
 	
 	public function getRole() {
 		return $this->userResult["role"];
+	}
+	
+	public function getMessenger() {
+		return $this->messenger;
 	}
 	
 	public function logout() {
