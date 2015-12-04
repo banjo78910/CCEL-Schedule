@@ -6,7 +6,7 @@ $( document ).ready( function() {
 		roleSwitcher( role );
 		loginUIUpdate( username, role );
 	} else {
-		window.location.assign( "../index.html" );
+		window.location.assign( "../" );
 	}
 	console.log( "get messages" );
 	var messages = getMessages();
@@ -19,6 +19,10 @@ $( document ).ready( function() {
 
 	$( ".btn-reply" ).on( 'click', function() {
 		replyHandler( $( ".list-group-item[class*=active]" ) );
+	} );
+
+	$( ".btn-delete" ).on( 'click', function() {
+		deleteMessage( $( ".list-group-item[class*=active]" ) );
 	} );
 
 } );
@@ -43,14 +47,14 @@ function composeDialogGen( sendTo, subject ) {
 			'</form> ' +
 			'</div> ',
 		buttons: {
-			register: {
+			close: {
 				label: "Close",
 				className: "btn-default",
 				callback: function() {
 
 				}
 			},
-			login: {
+			send: {
 				label: "Send",
 				className: "btn-primary",
 				callback: function() {
@@ -80,7 +84,7 @@ function messageBlockGen( messageData ) {
 		'<span class="msg-sender" style="min-width: 120px;' +
 		'display: inline-block;">' + messageData.senderID + '</span> <span class="msg-subject">' + messageData.subject + '</span>' +
 		'<span class="text-muted msg-body-display" style="font-size: 11px;">- ' + msgTrunc + '</span>' +
-		'<span class="msg-body-full">' + messageData.message + '</span>' + '<span class="msg-id' > +messageData.messageID + '</span>' +
+		'<span class="msg-body-full">' + messageData.message + '</span>' + '<span class="msg-id">' + messageData.messageID + '</span>' +
 		'</a>';
 
 	return block;
@@ -133,14 +137,16 @@ function sendMessage( messageData ) {
 }
 
 function deleteMessage( msgToDelete ) {
-	var msgID = msgToDisplay.find( ".msg-id" ).html();
+	console.log( "del msg" );
+	var msgID = msgToDelete.find( ".msg-id" ).html();
+	console.log( msgID );
 
 	$.ajax( {
 		url: '/php/mediator.php',
 		type: 'get',
 		data: {
 			'function': 'deleteMessage',
-			'jsonString': messageData
+			'messageID': msgID
 		},
 		success: function( data ) {
 			console.log( data );

@@ -182,6 +182,14 @@ function registerForm() {
 			'<input id="username" name="name" type="text" class="form-control input-md">' +
 			'</div>' +
 			'<div class="form-group">' +
+			'<label for="fname">First Name</label>' +
+			'<input id="fname" name="fname" type="text" class="form-control input-md">' +
+			'</div>' +
+			'<div class="form-group">' +
+			'<label for="lname">Last Name</label>' +
+			'<input idl="lname" name="lname" type="text" class="form-control input-md">' +
+			'</div>' +
+			'<div class="form-group">' +
 			'<label for="password ">Password</label>' +
 			'<input id="password" name="password" type="password" class="form-control form input-md ">' +
 			'</div>' +
@@ -200,7 +208,30 @@ function registerForm() {
 				label: "Register",
 				className: "btn-default",
 				callback: function() {
-					console.log();
+					var username = $( "#username" ).val();
+					var fname = $( "#fname" ).val();
+					var lname = $( "lname" ).val();
+					var password = $( "#password" ).val();
+					var email = $( "#email" ).val();
+
+					var regData = {
+						'username': username,
+						'firstName': fname,
+						'lastName': lname,
+						'password': password,
+						'email': email
+					};
+					$.ajax( {
+						url: '/php/mediator.php',
+						data: {
+							'function': 'registerJsonUser',
+							'jsonString': JSON.stringify( regData )
+						},
+						success( data ) {
+							window.location.reload();
+						}
+
+					} );
 
 				}
 			},
