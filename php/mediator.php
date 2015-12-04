@@ -43,7 +43,6 @@ class Mediator {
 		$this->sessions = $this->connection->query($sessionQuery);
 		/* Setup for pagination: */
 		$i = 0;
-		$this->genPageSelector();
 		echo("<div class=\"page\" id=page1>");
 		while (($row = $this->sessions->fetch_assoc()) != null) {
 			/* If a page worth of results has been displayed, start a new "page" div: */
@@ -55,6 +54,7 @@ class Mediator {
 			$i++; // Keeps track of how many results have been displayed, for pagination.
 		}
 		echo("</div>"); // End of div containing the very last page worth of results.
+		$this->genPageSelector();
 	}
 	
 	public function registerUser($username, $password, $firstName, $lastName, $email, $organization) {
