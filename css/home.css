@@ -10,6 +10,22 @@ body {
     display: none;
 }
 
+.btn-cancel {
+    margin-left: 5px;
+}
+
+.btn-create {
+    margin-left: 5px;
+}
+
+.msg-id {
+    display: none;
+}
+
+#list-sessions-manage {
+    display: none;
+}
+
 .msg-body-full {
     display: none;
 }
