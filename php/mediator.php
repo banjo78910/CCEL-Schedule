@@ -66,7 +66,7 @@ class Mediator {
 			$this->specializedInteractor = new Tutor($this->user->getUsername(), $this->connection);
 		}
 		elseif ($role == "siteLeader") {
-			$this->specializedInteractor = new SiteLeader($this->user->getUsername(), $this->connection);
+			$this->specializedInteractor = new SiteLeader($this->user->getUsername(), $this->connection, $this->getUser()->getMessenger());
 		}
 		elseif ($role == "supervisor") {
 			
@@ -102,6 +102,10 @@ class Mediator {
 	
 	public function sendMessage($recipient, $subject, $content) {
 		$this->getUser()->getMessenger()->sendMessage($recipient, $subject, $content);
+	}
+	
+	public function getAllowedRecipients() {
+		$this->getUser()->getMessenger()->getAllowedRecipients();
 	}
 	
 	/* Attender interface: */
@@ -156,11 +160,12 @@ class Mediator {
 
 // $_POST["username"] = "andyThursdays";
 // $_POST["password"] = "derp";
-// $_GET['sessionID'] = 3;
-// $_GET['function'] = 'getJsonMessages';
+// $_GET['sessionID'] = 6;
+// $_GET['function'] = 'cancelSession';
 // $_GET['recipient'] = 'ben';
 // $_GET['subject'] = 'test message';
 // $_GET['content'] = 'i hope to god this works ben';
+// $_GET['jsonString'] = '{"recipient":"ben","subject":"json test","message":"JSON TEST DURRRRR"}';
 $med = new Mediator();
 // $med->displayAllSessions();
 // $_GET['site'] = "John Hay HS";
@@ -187,6 +192,9 @@ if (isset($_GET['function'])) {
 	}
 	elseif ($function == 'sendMessage') {
 		$med->sendMessage($_GET['recipient'], $_GET['subject'], $_GET['content']);
+	}
+	elseif ($function == 'getAllowedRecipients') {
+		$med->getAllowedRecipients();
 	}
 	/* Attender functions: */
 	elseif ($function == 'displayAttendingSessions') {
