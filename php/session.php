@@ -26,6 +26,9 @@ class Session {
 	public function display() {
 		echo("<div class=\"list-group-item\" id=\"session{$this->sessionID}\">");
 		if (isset($_COOKIE['username'])) {
+			if ($_COOKIE['role'] == 'siteLeader') {
+				echo("<button type='button' id='{$this->sessionID}' class='btn btn-cancel btn-default pull-right'>Cancel</button>");
+			}
 			if ($this->willBeAttendedBy($_COOKIE['username']) || $this->willBeTutoredBy($_COOKIE['username'])) {
 				echo("<button type='button' id='{$this->sessionID}' class='btn btn-session btn-danger pull-right delete-from-sessions'> <span class='glyphicon glyphicon-minus' pointer-events:none> </span></button>");
 			}
