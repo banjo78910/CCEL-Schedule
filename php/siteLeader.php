@@ -1,19 +1,18 @@
 <?php
-/* - Add method to mediator to print info about any user.
- */
-
 class SiteLeader {
 	private $connection;
 	private $username;
 	private $site;
+	private $messenger;
 	
-	public function __construct($username, $connection) {
+	public function __construct($username, $connection, $messenger) {
 		$this->connection = $connection;
 		$this->username = $username;
 		$siteQuery = "select site from {$GLOBALS["database"]}.managesSite where username = '{$this->username}'";
 		$temp = $this->connection->query($siteQuery);
 		$temp = $temp->fetch_assoc();
 		$this->site = $temp['site'];
+		$this->messenger = $messenger;
 	}
 	
 	/**
@@ -54,12 +53,39 @@ class SiteLeader {
 	 * Delete a session from the session table, and remove all associated tutors in the willTutor table.
 	 */
 	public function cancelSession($sessionID) {
+		/* Record info about the session about to be cancelled: */
+		$sessionQuery = "select * from {$GLOBALS["database"]}.session where sessionID = {$sessionID}";
+		$sessionInfo = $this->connection->query($sessionQuery);
+		$sessionInfo = $sessionInfo->fetch_assoc();
+		/* Find out which tutors will be affected by this cancellation: */
+		$affectedTutorsQuery = "select tutorID from {$GLOBALS["database"]}.willTutor where sessionID = {$sessionID}";
+		$affectedTutors = $this->connection->query($affectedTutorsQuery);
+		/* Find out which attenders will be affected by this cancellation: */
+		$affectedAttendersQuery = "select userID from {$GLOBALS["database"]}.willAttend where sessionID = {$sessionID}";
+		$affectedAttenders = $this->connection->query($affectedAttendersQuery);
+		/* Perform the cancellation: */
 		$cancelQuery = "delete from {$GLOBALS["database"]}.session where sessionID = {$sessionID}";
 		$this->connection->query($cancelQuery);
 		$willTutorQuery = "delete from {$GLOBALS["database"]}.willTutor where sessionID = {$sessionID}";
 		$this->connection->query($willTutorQuery);
 		$willAttendQuery = "delete from {$GLOBALS["database"]}.willAttend where sessionID = {$sessionID}";
 		$this->connection->query($willAttendQuery);
+		/* Inform affected tutors: */
+		while ($row = $affectedTutors->fetch_assoc()) {
+			$recipient = $row['tutorID'];
+			$subject = "Session at {$sessionInfo['site']} on {$sessionInfo['date']} cancelled";
+			$content = "Hello, \nThe {$sessionInfo['subject']} tutoring session scheduled to take place at {$sessionInfo['site']} at {$sessionInfo['time']} on {$sessionInfo['date']} has been cancelled."
+			           . "\nPlease pay attention to the home page for future sessions at this site!";
+			$this->messenger->sendMessage($recipient, $subject, $content);
+		}
+		/* Inform affected attenders: */
+		while ($row = $affectedAttenders->fetch_assoc()) {
+			$recipient = $row['userID'];
+			$subject = "Session at {$sessionInfo['site']} on {$sessionInfo['date']} cancelled";
+			$content = "Hello, \nThe {$sessionInfo['subject']} tutoring session scheduled to take place at {$sessionInfo['site']} at {$sessionInfo['time']} on {$sessionInfo['date']} has been cancelled."
+			           . "\nPlease pay attention to the home page for future sessions at this site!";
+			$this->messenger->sendMessage($recipient, $subject, $content);
+		}
 	}
 	
 	/**
