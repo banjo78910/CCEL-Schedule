@@ -126,10 +126,6 @@ class Mediator {
 		$this->getUser()->getMessenger()->deleteMessage($messageID);
 	}
 	
-	public function registerJsonUser($jsonString) {
-		$this->registerJsonUser($jsonString);
-	}
-	
 	/* Attender interface: */
 	public function displayAttendingSessions() {
 		$this->specializedInteractor->displayAttendingSessions();
