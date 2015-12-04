@@ -8,13 +8,12 @@ $( document ).ready( function() {
 	} else {
 		window.location.assign( "../" );
 	}
-	console.log( "get messages" );
 	var messages = getMessages();
 
 	$( "#messages" ).html( '<a href="../">Home</a>' );
 
 	$( "#compose" ).on( 'click', function() {
-		composeDialogGen( 'student1', '' );
+		composeDialogGen( '', '' );
 	} );
 
 	$( ".btn-reply" ).on( 'click', function() {
@@ -23,6 +22,11 @@ $( document ).ready( function() {
 
 	$( ".btn-delete" ).on( 'click', function() {
 		deleteMessage( $( ".list-group-item[class*=active]" ) );
+	} );
+
+	$( ".btn-refresh" ).on( 'click', function() {
+		// console.log( reload );
+		window.location.reload();
 	} );
 
 } );
@@ -78,7 +82,6 @@ function composeDialogGen( sendTo, subject ) {
 
 function messageBlockGen( messageData ) {
 	var msgTrunc = messageData.message.substring( 0, 30 ) + '...';
-	console.log( msgTrunc );
 
 	var block = '<a href="#" class="list-group-item msg-block">' +
 		'<span class="msg-sender" style="min-width: 120px;' +
@@ -101,7 +104,6 @@ function getMessages() {
 		success: function( data ) {
 			messagesJSON = JSON.parse( data );
 			for ( var i = 0; i < messagesJSON.length; i++ ) {
-				console.log( messagesJSON[ i ] );
 				$( "#message-list" ).append( messageBlockGen( messagesJSON[ i ] ) );
 			}
 

@@ -11,6 +11,13 @@ var roleData = {
 };
 
 $( document ).ready( function() {
+	if ( window.location.pathname == '/' ) {
+		homeInit();
+	}
+
+} );
+
+function homeInit() {
 	role = $.cookie( 'role' );
 	username = $.cookie( 'username' );
 	console.log( "from home page load: username " + username + ", role: " + role );
@@ -52,41 +59,10 @@ $( document ).ready( function() {
 					}
 
 				} );
+				sessionButtonHandler();
 
 			} );
-			$( ".btn-session" ).on( "click", function() {
-				var func;
-
-				var e = $( event.currentTarget );
-
-				var status = e.hasClass( 'btn-success' );
-				var sessionid = e.attr( 'id' );
-
-				console.log( sessionid );
-				func = status ? roleData.addSession : roleData.deleteSession;
-
-				$.ajax( {
-					url: '/php/mediator.php',
-					data: {
-						'function': func,
-						'sessionID': sessionid
-					},
-					success( data ) {
-						console.log( e );
-						console.log( func + " succeeded" );
-
-						e.addClass( status ? 'btn-danger' : 'btn-success' );
-						e.removeClass( status ? 'btn-success' : 'btn-danger' );
-
-						e.removeClass( status ? 'delete-from-sessions' : 'add-to-sessions' );
-						e.addClass( status ? 'add-to-sessions' : 'remove-from-sessions' );
-
-						e.find( 'span' ).removeClass( status ? 'glyphicon-plus' : 'glyphicon-minus' );
-						e.find( 'span' ).addClass( status ? 'glyphicon-minus' : 'glyphicon-plus' );
-					}
-
-				} );
-			} );
+			sessionButtonHandler();
 
 			pageDivider();
 
@@ -106,8 +82,7 @@ $( document ).ready( function() {
 	$( "#login-student" ).click( function() {
 		loginForm( "Student" );
 	} );
-
-} );
+}
 
 function roleSwitcher( role ) {
 	switch ( role ) {
@@ -164,7 +139,7 @@ function loginForm() {
 					username = $( "#username" ).val();
 					var password = $( "#password" ).val();
 					console.log( username + password );
-					loginHandler( username, password );
+					loginUIUpdate( username, loginHandler( username, password ) );
 					window.location.reload();
 				}
 			}
@@ -243,7 +218,7 @@ function registerForm() {
 
 function loginHandler( username, password ) {
 	var session;
-
+	console.log( "handler: " + username + password );
 	$.ajax( {
 		url: '/php/mediator.php',
 		type: 'post',
@@ -280,7 +255,6 @@ function loginUIUpdate( username, role ) {
 		'<li id="list-sessions-manage"><a href="#">' + roleData.sessionStringManage + '</a></li>' +
 		'<li id="messages"><a href="/html/messagecenter.html">Message Center</a></li>' +
 		'<li role"separator" class="divider"></li>' +
-		'<li id="account"><a href="#">My Account</a></li>' +
 		'<li id="logout"><a href="#">Log Out</a></li>' +
 		'</ul>' +
 		'</div>'
@@ -397,6 +371,7 @@ function userSessionList( username, role ) {
 			'function': roleData.listSessions
 		},
 		success: function( data ) {
+
 			console.log( "data: " + data );
 			sessionDataString = data + "";
 			bootbox.dialog( {
@@ -413,6 +388,7 @@ function userSessionList( username, role ) {
 				}
 
 			} );
+			sessionButtonHandler();
 		},
 		error: function( xhr, desc, err ) {
 			console.log( xhr + " " + desc + " " + err );
@@ -446,6 +422,7 @@ function siteLeaderSessions( username, role ) {
 				}
 
 			} );
+			sessionButtonHandler();
 		},
 		error: function( xhr, desc, err ) {
 			console.log( xhr + " " + desc + " " + err );
@@ -496,8 +473,38 @@ function pageDivider() {
 	} );
 }
 
-function searchSessions() {
-	$( "#searchform" ).on( "submit", function( e ) {
+function sessionButtonHandler() {
+	$( ".btn-session" ).on( "click", function() {
+		var func;
 
+		var e = $( event.currentTarget );
+
+		var status = e.hasClass( 'btn-success' );
+		var sessionid = e.attr( 'id' );
+
+		console.log( sessionid );
+		func = status ? roleData.addSession : roleData.deleteSession;
+
+		$.ajax( {
+			url: '/php/mediator.php',
+			data: {
+				'function': func,
+				'sessionID': sessionid
+			},
+			success( data ) {
+				console.log( e );
+				console.log( func + " succeeded" );
+
+				e.addClass( status ? 'btn-danger' : 'btn-success' );
+				e.removeClass( status ? 'btn-success' : 'btn-danger' );
+
+				e.removeClass( status ? 'delete-from-sessions' : 'add-to-sessions' );
+				e.addClass( status ? 'add-to-sessions' : 'remove-from-sessions' );
+
+				e.find( 'span' ).removeClass( status ? 'glyphicon-plus' : 'glyphicon-minus' );
+				e.find( 'span' ).addClass( status ? 'glyphicon-minus' : 'glyphicon-plus' );
+			}
+
+		} );
 	} );
 }
