@@ -6,17 +6,12 @@ body {
     background-color: #F6F6F6;
 }
 
-.
-/*btn-add-to-sessions {
-    float: right;
+#msg-box {
+    display: none;
 }
-*/
 
-
-/* CSS used here will be applied after bootstrap.css */
-
-body {
-    margin-top: 50px;
+.msg-body-full {
+    display: none;
 }
 
 .nav-tabs .glyphicon:not(.no-margin) {

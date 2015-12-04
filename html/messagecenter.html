@@ -68,11 +68,11 @@
                 <a href="#" class="btn btn-danger btn-sm btn-block" id='compose' role="button"><i class="glyphicon glyphicon-edit"></i> Compose</a>
                 <hr>
                 <ul class="nav nav-pills nav-stacked">
-                    <li class="active"><a href="#"><span class="badge pull-right">32</span> All Messages </a>
-                    </li>
-                    <li><a href="#">From Students</a></li>
-                    <li><a href="#">From Tutors</a></li>
-                    <li><a href="#">From Administrators</a></li>
+                    <li class="msg-filter active" id="msg-inbox"><a href="#"><span class="badge pull-right">32</span> Inbox </a> </li>
+                    <li class="msg-filter" id="msg-sent"><a href="#"><span class="badge pull-right"></span> Sent Messages </a> </li>
+                    <li class="msg-filter" id="msg-students"><a href="#"><span class="badge pull-right"></span>From Students</a></li>
+                    <li class="msg-filter" id="msg-tutors"><a href="#"><span class="badge pull-right"></span>From Tutors</a></li>
+                    <li class="msg-filter" id="msg-admins"><a href="#"><span class="badge pull-right"></span>From Administrators</a></li>
                 </ul>
             </div>
             <div class="col-sm-9 col-md-10">
@@ -87,52 +87,23 @@
                 <!-- Tab panes -->
                 <div class="tab-content">
                     <div class="tab-pane fade in active" id="home">
-                        <div class="list-group" id='message-list'>
-                            <a href="#" class="list-group-item">
-                                <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox">
-                                    </label>
-                                </div>
-                                <span class="glyphicon glyphicon-star-empty"></span><span class="name" style="min-width: 120px;
-                                display: inline-block;">Mark Otto</span> <span class="">Nice work on the lastest version</span>
-                                <span class="text-muted" style="font-size: 11px;">- More content here</span> <span class="badge">12:10 AM</span> <span class="pull-right"><span class="glyphicon glyphicon-paperclip">
-                                </span></span>
-                            </a>
-                            <a href="#" class="list-group-item">
-                                <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox">
-                                    </label>
-                                </div>
-                                <span class="glyphicon glyphicon-star-empty"></span><span class="name" style="min-width: 120px;
-                                        display: inline-block;">Jason Markus</span> <span class="">This is big title</span>
-                                <span class="text-muted" style="font-size: 11px;">- I saw that you had..</span> <span class="badge">12:09 AM</span> <span class="pull-right">
-                            </a>
-                            <a href="#" class="list-group-item read">
-                                <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox">
-                                    </label>
-                                </div>
-                                <span class="glyphicon glyphicon-star"></span><span class="name" style="min-width: 120px;
-                                                display: inline-block;">Jane Patel</span> <span class="">This is big title</span>
-                                <span class="text-muted" style="font-size: 11px;">- Hi hello how r u ?</span> <span class="badge">11:30 PM</span> <span class="pull-right"><span class="glyphicon glyphicon-paperclip">
-                                                </span></span>
+                        <div class="list-group pre-scrollable" id='message-list'>
+                            <a href="#" class="list-group-item msg-block">
+                                <span class="msg-sender " style="min-width: 120px; display: inline-block;">Sent From</span>
+                                <span class="msg-subject">Subject</span>
+                                <span class="text-muted msg-body-display" style="font-size: 11px;">Message</span>
                             </a>
                         </div>
                     </div>
-                    <div class="tab-pane fade in" id="profile">
-                        <div class="list-group">
-                            <div class="list-group-item">
-                                <span class="text-center">This tab is empty.</span>
-                            </div>
+                </div>
+                <div class='well well-sm' id='msg-box'>
+                    <div class='panel panel-default pre-scrollable' id='msg-text'>
+                        <div class='panel-body msg-body'>
+                            Lorem ipsum dolor sit amet, qui platonem accommodare ex, torquatos vulputate adolescens ne has, pri no ubique conceptam. Eam ei iudico commune, lobortis constituto et eos, no odio ludus imperdiet pri. Oblique molestie facilisi at cum, sed in stet doming. In eum modus ubique fastidii, in sale possim feugiat vis. Ius ullum velit mollis at, in malorum voluptua accommodare pri. Congue ponderum his in, labore corpora vel at, illum dictas corpora eu mei. Graeci saperet ancillae eam an, animal malorum tacimates eam in. Ut sed ullum facilisis euripidis, mucius possim interpretaris ad usu. Quo ne tibique interesset. Posse albucius gloriatur at duo, vis solum definitionem eu. Impetus indoctum voluptatum pro ea.Duo et causae scribentur, molestiae euripidis gloriatur in vis, sed decore dolore tempor et. Per ferri explicari ad, nam iudicabit inciderint ex. Pro utinam detraxit dissentiet ut, has in tation electram. Aliquip invidunt vix ex. Euismod feugait quo eu, ea duis mutat paulo mea. Iisque persecuti argumentum sit no, eum constituto assueverit cu. Sit ut animal epicurei reprimique, te veritus forensibus ullamcorper vel, cum ignota sanctus urbanitas ut. Appetere tractatos vim ei, id mundi expetenda vituperata duo, ad est tantas dolorum mentitum. Eos ad quis alii nusquam, lorem postulant voluptatum at pri. Elitr adipisci definitionem vix te, congue quaeque ornatus pri an. Error ignota delectus vis an. Eum adhuc sapientem repudiandae et, maiorum torquatos an sea.
                         </div>
                     </div>
-                    <div class="tab-pane fade in" id="messages">
-                        ...</div>
-                    <div class="tab-pane fade in" id="settings">
-                        This tab is empty.</div>
+                    <button class='btn btn-default btn-reply'><span class='glyphicon glyphicon-share'></span></button>
+                    <button class='btn btn-default btn-delete'><span class='glyphicon glyphicon-trash'></span></button>
                 </div>
             </div>
         </div>
