@@ -139,6 +139,10 @@ class Mediator {
 		$this->specializedInteractor->createSession($date, $time, $subject, $gradeLevel);
 	}
 	
+	public function createJsonSession($jsonString) {
+		$this->specializedInteractor->createJsonSession($jsonString);
+	}
+	
 	public function modifySession($sessionID, $date, $time, $subject, $gradeLevel) {
 		$this->specializedInteractor->modifySession($sessionID, $date, $time, $subject, $gradeLevel);
 	}
@@ -219,6 +223,9 @@ if (isset($_GET['function'])) {
 	/* Site leader functions: */
 	elseif ($function == 'createSession') {
 		$med->createSession($_GET['date'], $_GET['time'], $_GET['subject'], $_GET['gradeLevel']);
+	}
+	elseif ($function == 'createJsonSession') {
+		$med->createJsonSession($_GET['jsonString']);
 	}
 	elseif ($function == 'modifySession') {
 		$med->modifySession($_GET['sessionID'], $_GET['date'], $_GET['time'], $_GET['subject'], $_GET['gradeLevel']);
