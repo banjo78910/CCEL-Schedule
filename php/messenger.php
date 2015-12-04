@@ -24,6 +24,22 @@ class Messenger {
 		$this->role = $roleResult['role'];
 	}
 	
+	/*
+	public function getAllowedRecipients() {
+		$allowedRecipientsArray = array();
+		if ($this->role == 'attender') {
+			$query = "select username from {$GLOBALS['database']}.user where role = 'tutor' or role = 'siteLeader'";
+			$allowedRecipients = $this->connection->query($query);
+			while ($row = $allowedRecipients->fetch_assoc()) {
+				
+			}
+		}
+		else {
+			
+		}
+	}
+	*/
+	
 	public function getMessages() {
 		$query = "select * from {$GLOBALS['database']}.message where recipientID = '{$this->username}'";
 		$messages = $this->connection->query($query);
@@ -43,7 +59,7 @@ class Messenger {
 	
 	public function sendJsonMessage($jsonString) {
 		$messageInfo = json_decode($jsonString, true);
-		$this->sendMessage($messageInfo['recipient'], $messageInfo['subject'], $messageInfo['content']);
+		$this->sendMessage($messageInfo['recipient'], $messageInfo['subject'], $messageInfo['message']);
 	}
 	
 	public function sendMessage($recipient, $subject, $content) {
