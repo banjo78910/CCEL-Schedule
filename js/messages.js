@@ -98,6 +98,40 @@ function messageBlockGen( messageData ) {
 	return block;
 }
 
+function getMessages() {
+	$.ajax( {
+		url: '/php/mediator.php',
+		type: 'get',
+		data: {
+			'function': 'displayAllSessions'
+		},
+		success: function( data ) {
+
+		},
+		error: function( xhr, desc, err ) {
+
+		}
+	} );
+}
+
+function sendMessage( messageData ) {
+	var messageDataString = JSON.stringify( messageData );
+	$.ajax( {
+		url: '/php/mediator.php',
+		type: 'get',
+		data: {
+			'function': 'displayAllSessions',
+			'messageData': messageDataString
+		},
+		success: function( data ) {
+
+		},
+		error: function( xhr, desc, err ) {
+
+		}
+	} );
+}
+
 function replyHandler( target ) {
 	var sendTo = target.find( ".msg-sender" ).html();
 	var subject = 'RE: ' + target.find( ".msg-subject" ).html();
