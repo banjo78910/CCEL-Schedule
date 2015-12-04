@@ -57,6 +57,20 @@ class Mediator {
 		echo("</div>"); // End of div containing the very last page worth of results.
 	}
 	
+	public function registerUser($username, $password, $firstName, $lastName, $email, $organization) {
+		$role = 'attender';
+		$query = "insert into {$GLOBALS["database"]}.user values ('$username', '$password', '$firstName', '$lastName', '$email', '$organization', '$role')";
+		$success = $this->connection->query($query);
+		if (!($success)) {
+			// Username probably already taken.
+		}
+	}
+	
+	public function registerJsonUser($jsonString) {
+		$userInfo = json_decode($jsonString, true);
+		$this->registerUser($userInfo['username'], $userInfo['password'], $userInfo['firstName'], $userInfo['lastName'], $userInfo['email'], $userInfo['organization']);
+	}
+	
 	private function specializeLogin() {
 		$role = $this->user->getRole();
 		if ($role == "attender") {
@@ -106,6 +120,14 @@ class Mediator {
 	
 	public function getAllowedRecipients() {
 		$this->getUser()->getMessenger()->getAllowedRecipients();
+	}
+	
+	public function deleteMessage($messageID) {
+		$this->getUser()->getMessenger()->deleteMessage($messageID);
+	}
+	
+	public function registerJsonUser($jsonString) {
+		$this->registerJsonUser($jsonString);
 	}
 	
 	/* Attender interface: */
@@ -199,6 +221,12 @@ if (isset($_GET['function'])) {
 	}
 	elseif ($function == 'getAllowedRecipients') {
 		$med->getAllowedRecipients();
+	}
+	elseif ($function == 'deleteMessage') {
+		$med->deleteMessage($_GET['messageID']);
+	}
+	elseif ($function == 'registerJsonUser') {
+		$med->registerJsonUser($_GET['jsonString']);
 	}
 	/* Attender functions: */
 	elseif ($function == 'displayAttendingSessions') {
